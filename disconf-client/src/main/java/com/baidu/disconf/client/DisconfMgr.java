@@ -24,6 +24,8 @@ import com.baidu.disconf.client.support.registry.RegistryFactory;
  *
  * @author liaoqiqi
  * @version 2014-5-23
+ *
+ * 2017-12-07
  */
 public class DisconfMgr implements ApplicationContextAware {
 
@@ -32,13 +34,10 @@ public class DisconfMgr implements ApplicationContextAware {
     // 本实例不能初始化两次
     private boolean isFirstInit = false;
     private boolean isSecondInit = false;
-
     // application context
     private ApplicationContext applicationContext;
-
     // 核心处理器
     private DisconfCoreMgr disconfCoreMgr = null;
-
     // scan mgr
     private ScanMgr scanMgr = null;
 
@@ -48,17 +47,13 @@ public class DisconfMgr implements ApplicationContextAware {
         return INSTANCE;
     }
 
-    private DisconfMgr() {
-
-    }
+    private DisconfMgr() {}
 
     /**
      * 总入口
      */
     public synchronized void start(List<String> scanPackageList) {
-
         firstScan(scanPackageList);
-
         secondScan();
     }
 
@@ -66,19 +61,13 @@ public class DisconfMgr implements ApplicationContextAware {
      * 第一次扫描，静态扫描 for annotation config
      */
     protected synchronized void firstScan(List<String> scanPackageList) {
-
         // 该函数不能调用两次
         if (isFirstInit) {
             LOGGER.info("DisConfMgr has been init, ignore........");
             return;
         }
 
-        //
-        //
-        //
-
         try {
-
             // 导入配置
             ConfigMgr.init();
 
@@ -86,24 +75,18 @@ public class DisconfMgr implements ApplicationContextAware {
 
             // registry
             Registry registry = RegistryFactory.getSpringRegistry(applicationContext);
-
             // 扫描器
             scanMgr = ScanFactory.getScanMgr(registry);
-
             // 第一次扫描并入库
             scanMgr.firstScan(scanPackageList);
-
             // 获取数据/注入/Watch
             disconfCoreMgr = DisconfCoreFactory.getDisconfCoreMgr(registry);
             disconfCoreMgr.process();
 
-            //
             isFirstInit = true;
 
             LOGGER.info("******************************* DISCONF END FIRST SCAN *******************************");
-
         } catch (Exception e) {
-
             LOGGER.error(e.toString(), e);
         }
     }
@@ -112,7 +95,6 @@ public class DisconfMgr implements ApplicationContextAware {
      * 第二次扫描, 动态扫描, for annotation config
      */
     protected synchronized void secondScan() {
-
         // 该函数必须第一次运行后才能运行
         if (!isFirstInit) {
             LOGGER.info("should run First Scan before Second Scan.");
@@ -126,9 +108,7 @@ public class DisconfMgr implements ApplicationContextAware {
         }
 
         LOGGER.info("******************************* DISCONF START SECOND SCAN *******************************");
-
         try {
-
             // 扫描回调函数
             if (scanMgr != null) {
                 scanMgr.secondScan();
@@ -146,21 +126,15 @@ public class DisconfMgr implements ApplicationContextAware {
 
         isSecondInit = true;
 
-        //
         // 不开启 则不要打印变量map
-        //
         if (DisClientConfig.getInstance().ENABLE_DISCONF) {
-
             //
-            String data = DisconfStoreProcessorFactory.getDisconfStoreFileProcessor()
-                    .confToString();
+            String data = DisconfStoreProcessorFactory.getDisconfStoreFileProcessor().confToString();
             if (!StringUtils.isEmpty(data)) {
                 LOGGER.info("Conf File Map: {}", data);
             }
 
-            //
-            data = DisconfStoreProcessorFactory.getDisconfStoreItemProcessor()
-                    .confToString();
+            data = DisconfStoreProcessorFactory.getDisconfStoreItemProcessor().confToString();
             if (!StringUtils.isEmpty(data)) {
                 LOGGER.info("Conf Item Map: {}", data);
             }
@@ -172,28 +146,21 @@ public class DisconfMgr implements ApplicationContextAware {
      * reloadable config file scan, for xml config
      */
     public synchronized void reloadableScan(String fileName) {
-
         if (!isFirstInit) {
             return;
         }
-
         if (DisClientConfig.getInstance().ENABLE_DISCONF) {
             try {
-
                 if (!DisClientConfig.getInstance().getIgnoreDisconfKeySet().contains(fileName)) {
-
                     if (scanMgr != null) {
                         scanMgr.reloadableScan(fileName);
                     }
-
                     if (disconfCoreMgr != null) {
                         disconfCoreMgr.processFile(fileName);
                     }
                     LOGGER.debug("disconf reloadable file: {}", fileName);
                 }
-
             } catch (Exception e) {
-
                 LOGGER.error(e.toString(), e);
             }
         }
@@ -203,21 +170,16 @@ public class DisconfMgr implements ApplicationContextAware {
      * @Description: 总关闭
      */
     public synchronized void close() {
-
         try {
-
             // disconfCoreMgr
             LOGGER.info("******************************* DISCONF CLOSE *******************************");
             if (disconfCoreMgr != null) {
                 disconfCoreMgr.release();
             }
-
             // close, 必须将其设置为False,以便重新更新
             isFirstInit = false;
             isSecondInit = false;
-
         } catch (Exception e) {
-
             LOGGER.error("DisConfMgr close Failed.", e);
         }
     }

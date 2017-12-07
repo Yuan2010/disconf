@@ -23,6 +23,11 @@ import com.baidu.disconf.client.support.utils.StringUtil;
  *
  * @author liaoqiqi
  * @version 2014-6-17
+ *
+ * 2017-12-07  依赖disconf时在spring-disconf.xml中配置这个类了
+ *
+ * spring-disconf.xml的完全版在：DisconfMgrBeanSecond类中
+ *
  */
 public class DisconfMgrBean implements BeanDefinitionRegistryPostProcessor, PriorityOrdered, ApplicationContextAware {
 
