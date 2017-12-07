@@ -23,11 +23,8 @@ public class ConfigMgr {
 
     /**
      * 初始化配置
-     *
-     * @throws Exception
      */
     public synchronized static void init() throws Exception {
-
         LOGGER.info("--------------- LOAD CONFIG START ---------------");
         LOGGER.info("Finer print: " + DisClientComConfig.getInstance().getInstanceFingerprint());
 

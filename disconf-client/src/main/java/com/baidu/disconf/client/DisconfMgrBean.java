@@ -32,13 +32,10 @@ import com.baidu.disconf.client.support.utils.StringUtil;
 public class DisconfMgrBean implements BeanDefinitionRegistryPostProcessor, PriorityOrdered, ApplicationContextAware {
 
     public final static String SCAN_SPLIT_TOKEN = ",";
-
     private ApplicationContext applicationContext;
-
     private String scanPackage = null;
 
     public void destroy() {
-
         DisconfMgr.getInstance().close();
     }
 
@@ -60,25 +57,22 @@ public class DisconfMgrBean implements BeanDefinitionRegistryPostProcessor, Prio
 
     /**
      * 第一次扫描<br/>
-     * 在Spring内部的Bean定义初始化后执行，这样是最高优先级的
+     * 在Spring内部的Bean定义初始化后执行，这样是最高优先级的。   yuanhy 认真阅读本类所实现接口的描述和层次
      */
     @Override
     public void postProcessBeanDefinitionRegistry(BeanDefinitionRegistry registry) throws BeansException {
-
         // 为了做兼容
-        DisconfCenterHostFilesStore.getInstance().addJustHostFileSet(fileList);
+        DisconfCenterHostFilesStore.getInstance().addJustHostFileSet(fileList); // 仅对HashSet进行get/set ，但有个JVM保证线程安全的类级内部类
 
-        List<String> scanPackList = StringUtil.parseStringToStringList(scanPackage, SCAN_SPLIT_TOKEN);
-        // unique
+        List<String> scanPackList = StringUtil.parseStringToStringList(scanPackage, SCAN_SPLIT_TOKEN); // 应该在这个方法中去重
+        // unique（去重）
         Set<String> hs = new HashSet<String>();
         hs.addAll(scanPackList);
         scanPackList.clear();
         scanPackList.addAll(hs);
-
-        // 进行扫描
+        // 扫描
         DisconfMgr.getInstance().setApplicationContext(applicationContext);
         DisconfMgr.getInstance().firstScan(scanPackList);
-
         // register java bean
         registerAspect(registry);
     }
@@ -94,14 +88,12 @@ public class DisconfMgrBean implements BeanDefinitionRegistryPostProcessor, Prio
      * @param registry
      */
     private void registerAspect(BeanDefinitionRegistry registry) {
-
         GenericBeanDefinition beanDefinition = new GenericBeanDefinition();
         beanDefinition.setBeanClass(DisconfAspectJ.class);
         beanDefinition.setLazyInit(false);
         beanDefinition.setAbstract(false);
         beanDefinition.setAutowireCandidate(true);
         beanDefinition.setScope("singleton");
-
         registry.registerBeanDefinition("disconfAspectJ", beanDefinition);
     }
 

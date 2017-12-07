@@ -18,37 +18,29 @@ import com.baidu.disconf.client.watch.WatchMgr;
  *
  * @author liaoqiqi
  * @version 2014-6-10
+ *
+ * 2017-12-07
  */
 public class DisconfCoreMgrImpl implements DisconfCoreMgr {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(DisconfCoreMgrImpl.class);
 
     private List<DisconfCoreProcessor> disconfCoreProcessorList = new ArrayList<DisconfCoreProcessor>();
-
     // 监控器
     private WatchMgr watchMgr = null;
-
     // 抓取器
     private FetcherMgr fetcherMgr = null;
-
     // registry
     private Registry registry = null;
 
     public DisconfCoreMgrImpl(WatchMgr watchMgr, FetcherMgr fetcherMgr, Registry registry) {
-
         this.watchMgr = watchMgr;
         this.fetcherMgr = fetcherMgr;
         this.registry = registry;
-
-        //
         // 在这里添加好配置项、配置文件的处理器
-        //
-        DisconfCoreProcessor disconfCoreProcessorFile =
-                DisconfCoreProcessorFactory.getDisconfCoreProcessorFile(watchMgr, fetcherMgr, registry);
+        DisconfCoreProcessor disconfCoreProcessorFile = DisconfCoreProcessorFactory.getDisconfCoreProcessorFile(watchMgr, fetcherMgr, registry);
         disconfCoreProcessorList.add(disconfCoreProcessorFile);
-
-        DisconfCoreProcessor disconfCoreProcessorItem =
-                DisconfCoreProcessorFactory.getDisconfCoreProcessorItem(watchMgr, fetcherMgr, registry);
+        DisconfCoreProcessor disconfCoreProcessorItem = DisconfCoreProcessorFactory.getDisconfCoreProcessorItem(watchMgr, fetcherMgr, registry);
         disconfCoreProcessorList.add(disconfCoreProcessorItem);
     }
 
@@ -60,12 +52,7 @@ public class DisconfCoreMgrImpl implements DisconfCoreMgr {
      * 更新 所有配置数据
      */
     public void process() {
-
-        //
-        // 处理
-        //
         for (DisconfCoreProcessor disconfCoreProcessor : disconfCoreProcessorList) {
-
             disconfCoreProcessor.processAllItems();
         }
     }
@@ -75,10 +62,7 @@ public class DisconfCoreMgrImpl implements DisconfCoreMgr {
      */
     @Override
     public void processFile(String fileName) {
-
-        DisconfCoreProcessor disconfCoreProcessorFile =
-                DisconfCoreProcessorFactory.getDisconfCoreProcessorFile(watchMgr, fetcherMgr, registry);
-
+        DisconfCoreProcessor disconfCoreProcessorFile = DisconfCoreProcessorFactory.getDisconfCoreProcessorFile(watchMgr, fetcherMgr, registry);
         disconfCoreProcessorFile.processOneItem(fileName);
     }
 
@@ -86,23 +70,16 @@ public class DisconfCoreMgrImpl implements DisconfCoreMgr {
      * 特殊的，将仓库里的数据注入到 配置项、配置文件 的实体中
      */
     public void inject2DisconfInstance() {
-
-        //
-        // 处理
-        //
         for (DisconfCoreProcessor disconfCoreProcessor : disconfCoreProcessorList) {
-
             disconfCoreProcessor.inject2Conf();
         }
     }
 
     @Override
     public void release() {
-
         if (fetcherMgr != null) {
             fetcherMgr.release();
         }
-
         if (watchMgr != null) {
             watchMgr.release();
         }

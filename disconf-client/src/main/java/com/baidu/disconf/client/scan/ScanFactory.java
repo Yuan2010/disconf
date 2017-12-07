@@ -8,15 +8,11 @@ import com.baidu.disconf.client.support.registry.Registry;
  *
  * @author liaoqiqi
  * @version 2014-7-29
+ *
+ * 2017-12-07
  */
 public class ScanFactory {
-
-    /**
-     * @throws Exception
-     */
     public static ScanMgr getScanMgr(Registry registry) throws Exception {
-
-        ScanMgr scanMgr = new ScanMgrImpl(registry);
-        return scanMgr;
+        return new ScanMgrImpl(registry);
     }
 }

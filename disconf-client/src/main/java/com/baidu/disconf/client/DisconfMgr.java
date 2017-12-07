@@ -28,7 +28,6 @@ import com.baidu.disconf.client.support.registry.RegistryFactory;
  * 2017-12-07
  */
 public class DisconfMgr implements ApplicationContextAware {
-
     protected static final Logger LOGGER = LoggerFactory.getLogger(DisconfMgr.class);
 
     // 本实例不能初始化两次
@@ -78,7 +77,7 @@ public class DisconfMgr implements ApplicationContextAware {
             // 扫描器
             scanMgr = ScanFactory.getScanMgr(registry);
             // 第一次扫描并入库
-            scanMgr.firstScan(scanPackageList);
+            scanMgr.firstScan(scanPackageList); // 调用哪个？
             // 获取数据/注入/Watch
             disconfCoreMgr = DisconfCoreFactory.getDisconfCoreMgr(registry);
             disconfCoreMgr.process();
@@ -100,7 +99,6 @@ public class DisconfMgr implements ApplicationContextAware {
             LOGGER.info("should run First Scan before Second Scan.");
             return;
         }
-
         // 第二次扫描也只能做一次
         if (isSecondInit) {
             LOGGER.info("should not run twice.");
@@ -119,7 +117,6 @@ public class DisconfMgr implements ApplicationContextAware {
             if (disconfCoreMgr != null) {
                 disconfCoreMgr.inject2DisconfInstance();
             }
-
         } catch (Exception e) {
             LOGGER.error(e.toString(), e);
         }
@@ -128,7 +125,6 @@ public class DisconfMgr implements ApplicationContextAware {
 
         // 不开启 则不要打印变量map
         if (DisClientConfig.getInstance().ENABLE_DISCONF) {
-            //
             String data = DisconfStoreProcessorFactory.getDisconfStoreFileProcessor().confToString();
             if (!StringUtils.isEmpty(data)) {
                 LOGGER.info("Conf File Map: {}", data);
@@ -171,10 +167,9 @@ public class DisconfMgr implements ApplicationContextAware {
      */
     public synchronized void close() {
         try {
-            // disconfCoreMgr
             LOGGER.info("******************************* DISCONF CLOSE *******************************");
             if (disconfCoreMgr != null) {
-                disconfCoreMgr.release();
+                disconfCoreMgr.release();  // yuanhy 执行fetcherMgr.release(); watchMgr.release();
             }
             // close, 必须将其设置为False,以便重新更新
             isFirstInit = false;

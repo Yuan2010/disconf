@@ -6,17 +6,15 @@ import com.baidu.disconf.client.support.registry.impl.SpringRegistry;
 
 /**
  * Created by knightliao on 15/11/26.
+ *
+ * 2017-12-07
+ *
  */
 public class RegistryFactory {
 
-    /**
-     *
-     */
     public static Registry getSpringRegistry(ApplicationContext applicationContext) throws Exception {
-
         SpringRegistry registry = new SpringRegistry();
         registry.setApplicationContext(applicationContext);
-
         return registry;
     }
 }

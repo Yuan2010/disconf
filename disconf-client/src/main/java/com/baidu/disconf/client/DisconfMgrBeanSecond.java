@@ -18,7 +18,9 @@ public class DisconfMgrBeanSecond {
         DisconfMgr.getInstance().close();
     }
 }
-/**  一个完整的spring-disconf.xml配置如下
+
+
+/*       一个完整的spring-disconf.xml配置如下
 
         <?xml version="1.0" encoding="UTF-8"?>
     <beans xmlns="http://www.springframework.org/schema/beans"

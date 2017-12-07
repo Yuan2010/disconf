@@ -72,21 +72,11 @@ public abstract class StringUtil {
         return result;
     }
 
-    /**
-     * @param source
-     * @param token
-     *
-     * @return
-     */
-    public static List<String> parseStringToStringList(String source,
-                                                       String token) {
-
+    public static List<String> parseStringToStringList(String source, String token) {
         if (StringUtils.isBlank(source) || StringUtils.isEmpty(token)) {
             return null;
         }
-
         List<String> result = new ArrayList<String>();
-
         String[] units = source.split(token);
         for (String unit : units) {
             result.add(unit);
