@@ -16,10 +16,16 @@ import com.baidu.disconf.core.common.constants.Constants;
  *
  * @author liaoqiqi
  * @version 2014-6-6
+ *
+ * 2017-12-08
  */
 public final class DisClientConfig {
-
     protected static final Logger LOGGER = LoggerFactory.getLogger(DisClientConfig.class);
+
+    private boolean isLoaded = false;
+    protected static final String filename = "disconf.properties";
+    // disconf.properties 的路径 -D 传入
+    private static final String DISCONF_CONF_FILE_PATH_ARG = "disconf.conf";
 
     protected static final DisClientConfig INSTANCE = new DisClientConfig();
 
@@ -27,15 +33,7 @@ public final class DisClientConfig {
         return INSTANCE;
     }
 
-    protected static final String filename = "disconf.properties";
-
-    // disconf.properties 的路径 -D 传入
-    private static final String DISCONF_CONF_FILE_PATH_ARG = "disconf.conf";
-
-    private boolean isLoaded = false;
-
     private DisClientConfig() {
-
     }
 
     public synchronized boolean isLoaded() {
@@ -44,38 +42,25 @@ public final class DisClientConfig {
 
     /**
      * load config normal
-     *
-     * @throws Exception
      */
     public synchronized void loadConfig(String filePath) throws Exception {
-
         if (isLoaded) {
             return;
         }
-
-        String filePathInternal = filename;
-
-        // 指定的路径
-        if (filePath != null) {
-            filePathInternal = filePath;
-        }
-
-        // -d 的路径
-        // 优先使用 系统参数或命令行导入
+        String propertyFilePath = filePath != null ? filePath : filename;
+        // -d 的路径。优先使用 系统参数或命令行导入
         String disconfFilePath = System.getProperty(DISCONF_CONF_FILE_PATH_ARG);
         if (disconfFilePath != null) {
-            filePathInternal = disconfFilePath;
+            propertyFilePath = disconfFilePath;
         }
-
         try {
-            DisconfAutowareConfig.autowareConfig(INSTANCE, filePathInternal);
+            DisconfAutowareConfig.autowareConfig(INSTANCE, propertyFilePath);
         } catch (Exception e) {
-            LOGGER.warn("cannot find " + filePathInternal + ", using sys var or user input.");
+            LOGGER.warn("cannot find " + propertyFilePath + ", using sys var or user input.");
         }
 
         // 使用system env 导入
         DisconfAutowareConfig.autowareConfigWithSystemEnv(INSTANCE);
-
         isLoaded = true;
     }
 
@@ -90,9 +75,6 @@ public final class DisClientConfig {
 
     /**
      * app
-     *
-     * @author
-     * @since 1.0.0
      */
     public static final String APP_NAME = "disconf.app";
     @DisInnerConfigAnnotation(name = DisClientConfig.APP_NAME)
@@ -100,9 +82,6 @@ public final class DisClientConfig {
 
     /**
      * 版本
-     *
-     * @author
-     * @since 1.0.0
      */
     public static final String VERSION_NAME = "disconf.version";
     @DisInnerConfigAnnotation(name = DisClientConfig.VERSION_NAME, defaultValue = Constants.DEFAULT_VERSION)
@@ -110,18 +89,12 @@ public final class DisClientConfig {
 
     /**
      * 主或备
-     *
-     * @author
-     * @since 1.0.0
      */
     @DisInnerConfigAnnotation(name = "disconf.maintype")
     public String MAIN_TYPE;
 
     /**
      * 部署环境
-     *
-     * @author
-     * @since 1.0.0
      */
     public static final String ENV_NAME = "disconf.env";
     @DisInnerConfigAnnotation(name = DisClientConfig.ENV_NAME, defaultValue = Constants.DEFAULT_ENV)
@@ -129,9 +102,6 @@ public final class DisClientConfig {
 
     /**
      * 是否从云端下载配置
-     *
-     * @author
-     * @since 1.0.0
      */
     private static final String ENABLE_REMOTE_CONF_NAME = "disconf.enable.remote.conf";
     @DisInnerConfigAnnotation(name = DisClientConfig.ENABLE_REMOTE_CONF_NAME, defaultValue = "false")
@@ -141,18 +111,12 @@ public final class DisClientConfig {
      * 是否开启DEBUG模式: 默认不开启，
      * 1）true: 用于线下调试，当ZK断开与client连接后（如果设置断点，这个事件很容易就发生），ZK不会去重新建立连接。
      * 2）false: 用于线上，当ZK断开与client连接后，ZK会再次去重新建立连接。
-     *
-     * @author
-     * @since 1.0.0
      */
     @DisInnerConfigAnnotation(name = "disconf.debug", defaultValue = "false")
     public boolean DEBUG = false;
 
     /**
      * 忽略哪些分布式配置
-     *
-     * @author
-     * @since 1.0.0
      */
     @DisInnerConfigAnnotation(name = "disconf.ignore", defaultValue = "")
     public String IGNORE_DISCONF_LIST = "";
@@ -160,36 +124,24 @@ public final class DisClientConfig {
 
     /**
      * 获取远程配置 重试次数，默认是3次
-     *
-     * @author
-     * @since 1.0.0
      */
     @DisInnerConfigAnnotation(name = "disconf.conf_server_url_retry_times", defaultValue = "3")
     public int CONF_SERVER_URL_RETRY_TIMES = 3;
 
     /**
      * 用户指定的 下载文件夹, 远程文件下载后会放在这里
-     *
-     * @author
-     * @since 1.0.0
      */
     @DisInnerConfigAnnotation(name = "disconf.user_define_download_dir", defaultValue = "./disconf/download")
     public String userDefineDownloadDir = "./disconf/download";
 
     /**
      * 获取远程配置 重试时休眠时间，默认是5秒
-     *
-     * @author
-     * @since 1.0.0
      */
     @DisInnerConfigAnnotation(name = "disconf.conf_server_url_retry_sleep_seconds", defaultValue = "2")
     public int confServerUrlRetrySleepSeconds = 2;
 
     /**
      * 让下载文件夹放在 classpath目录 下
-     *
-     * @author
-     * @since 1.0.0
      */
     @DisInnerConfigAnnotation(name = "disconf.enable_local_download_dir_in_class_path", defaultValue = "true")
     public boolean enableLocalDownloadDirInClassPath = true;
@@ -209,5 +161,4 @@ public final class DisClientConfig {
     public void setIgnoreDisconfKeySet(Set<String> ignoreDisconfKeySet) {
         this.ignoreDisconfKeySet = ignoreDisconfKeySet;
     }
-
 }

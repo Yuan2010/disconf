@@ -5,24 +5,19 @@ package com.baidu.disconf.client.common.model;
  *
  * @author liaoqiqi
  * @version 2014-6-27
+ *
+ * 2017-12-08
  */
 public class InstanceFingerprint {
-
-    // 本实例所在机器的IP
-    private String host = "";
-
-    // 可以表示本实例的PORT
-    private int port = 0;
-
-    // 一个实例固定的UUID
-    private String uuid = "";
+    private String host = "";  // 本实例所在机器的IP
+    private int port = 0;      // 可以表示本实例的PORT
+    private String uuid = "";  // 一个实例固定的UUID
 
     public String getHost() {
         return host;
     }
 
     public InstanceFingerprint(String host, int port, String uuid) {
-        super();
         this.host = host;
         this.port = port;
         this.uuid = uuid;
@@ -52,5 +47,4 @@ public class InstanceFingerprint {
     public String toString() {
         return "InstanceFingerprint [host=" + host + ", port=" + port + "]";
     }
-
 }
