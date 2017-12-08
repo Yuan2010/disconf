@@ -22,25 +22,20 @@ import com.baidu.disconf.client.support.utils.MethodUtils;
 import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
 import com.baidu.disconf.core.common.path.DisconfWebPathMgr;
 
-/*
- * 配置项的静态扫描 
+/**
+ * 配置项的静态扫描
+ *
+ * 2017-12-08
  */
 public class StaticScannerItemMgrImpl extends StaticScannerMgrImplBase implements StaticScannerMgr {
-
     protected static final Logger LOGGER = LoggerFactory.getLogger(StaticScannerItemMgrImpl.class);
 
     @Override
     public void scanData2Store(ScanStaticModel scanModel) {
-
-        // 转换配置项
         List<DisconfCenterBaseModel> disconfCenterItems = getDisconfItems(scanModel);
         DisconfStoreProcessorFactory.getDisconfStoreItemProcessor().transformScanData(disconfCenterItems);
-
     }
 
-    /**
-     *
-     */
     @Override
     public void exclude(Set<String> keySet) {
         DisconfStoreProcessorFactory.getDisconfStoreItemProcessor().exclude(keySet);
@@ -50,19 +45,14 @@ public class StaticScannerItemMgrImpl extends StaticScannerMgrImplBase implement
      * 转换配置项
      */
     private static List<DisconfCenterBaseModel> getDisconfItems(ScanStaticModel scanModel) {
-
         List<DisconfCenterBaseModel> disconfCenterItems = new ArrayList<DisconfCenterBaseModel>();
-
         Set<Method> methods = scanModel.getDisconfItemMethodSet();
         for (Method method : methods) {
-
             DisconfCenterItem disconfCenterItem = transformScanItem(method);
-
             if (disconfCenterItem != null) {
                 disconfCenterItems.add(disconfCenterItem);
             }
         }
-
         return disconfCenterItems;
     }
 
@@ -70,44 +60,22 @@ public class StaticScannerItemMgrImpl extends StaticScannerMgrImplBase implement
      * 转换配置项
      */
     private static DisconfCenterItem transformScanItem(Method method) {
-
         DisconfCenterItem disconfCenterItem = new DisconfCenterItem();
-
-        // class
-        Class<?> cls = method.getDeclaringClass();
-
-        // fields
+        Class<?> cls = method.getDeclaringClass(); // class
         Field[] expectedFields = cls.getDeclaredFields();
-
-        // field
         Field field = MethodUtils.getFieldFromMethod(method, expectedFields, DisConfigTypeEnum.ITEM);
-
         if (field == null) {
             return null;
         }
 
-        // 获取标注
-        DisconfItem disconfItem = method.getAnnotation(DisconfItem.class);
-
-        // 去掉空格
-        String key = disconfItem.key().replace(" ", "");
-
-        // get setter method
-        Method setterMethod = MethodUtils.getSetterMethodFromField(cls, field);
+        DisconfItem disconfItem = method.getAnnotation(DisconfItem.class);       // 获取标注
+        String key = disconfItem.key().replace(" ", "");                         // 去掉空格
+        Method setterMethod = MethodUtils.getSetterMethodFromField(cls, field);  // get setter method
         disconfCenterItem.setSetMethod(setterMethod);
-
-        // field
-        disconfCenterItem.setField(field);
-
-        // key
-        disconfCenterItem.setKey(key);
-
-        // access
+        disconfCenterItem.setField(field);  // field
+        disconfCenterItem.setKey(key);  // key
         field.setAccessible(true);
-
-        // object
         disconfCenterItem.setObject(null);
-
         // value
         if (Modifier.isStatic(field.getModifiers())) {
             try {
@@ -120,14 +88,16 @@ public class StaticScannerItemMgrImpl extends StaticScannerMgrImplBase implement
             disconfCenterItem.setValue(null);
         }
 
-        //
         // disConfCommonModel
-        DisConfCommonModel disConfCommonModel = makeDisConfCommonModel(disconfItem.app(), disconfItem.env(),
+        DisConfCommonModel disConfCommonModel = makeDisConfCommonModel(
+                disconfItem.app(),
+                disconfItem.env(),
                 disconfItem.version());
         disconfCenterItem.setDisConfCommonModel(disConfCommonModel);
 
         // Disconf-web url
-        String url = DisconfWebPathMgr.getRemoteUrlParameter(DisClientSysConfig.getInstance().CONF_SERVER_STORE_ACTION,
+        String url = DisconfWebPathMgr.getRemoteUrlParameter(
+                DisClientSysConfig.getInstance().CONF_SERVER_STORE_ACTION,
                 disConfCommonModel.getApp(),
                 disConfCommonModel.getVersion(),
                 disConfCommonModel.getEnv(), key,

@@ -15,21 +15,18 @@ public class StaticScannerMgrImplBase {
      */
     protected static DisConfCommonModel makeDisConfCommonModel(String app, String env, String version) {
         DisConfCommonModel disConfCommonModel = new DisConfCommonModel();
-        // app
         if (!app.isEmpty()) {
             disConfCommonModel.setApp(app);
         } else {
             disConfCommonModel.setApp(DisClientConfig.getInstance().APP);
         }
 
-        // env
         if (!env.isEmpty()) {
             disConfCommonModel.setEnv(env);
         } else {
             disConfCommonModel.setEnv(DisClientConfig.getInstance().ENV);
         }
 
-        // version
         if (!version.isEmpty()) {
             disConfCommonModel.setVersion(version);
         } else {

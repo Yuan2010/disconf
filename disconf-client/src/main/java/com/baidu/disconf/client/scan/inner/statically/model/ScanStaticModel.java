@@ -13,40 +13,21 @@ import com.baidu.disconf.client.common.update.IDisconfUpdatePipeline;
  *
  * @author liaoqiqi
  * @version 2014-6-9
+ *
+ * 2017-12-08
  */
 public class ScanStaticModel {
 
     private Reflections reflections;
-
-    //
-    // 配置文件
-    private Set<Class<?>> disconfFileClassSet;
-
-    // 配置文件中的函数
-    private Set<Method> disconfFileItemMethodSet;
-
-    //
-    // 配置文件及其函数的MAP, KEY为配置文件类
-    private Map<Class<?>, Set<Method>> disconfFileItemMap;
-
-    //
-    // 配置ITEM
-    private Set<Method> disconfItemMethodSet;
-
-    //
-    // 主从切换的回调函数类
-    private Set<Class<?>> disconfActiveBackupServiceClassSet;
-
-    //
-    // 更新 回调函数类
-    private Set<Class<?>> disconfUpdateService;
+    private Set<Class<?>> disconfFileClassSet;                 // 配置文件
+    private Set<Method> disconfFileItemMethodSet;              // 配置文件中的函数
+    private Map<Class<?>, Set<Method>> disconfFileItemMap;     // 配置文件及其函数的MAP, KEY为配置文件类
+    private Set<Method> disconfItemMethodSet;                  // 配置ITEM
+    private Set<Class<?>> disconfActiveBackupServiceClassSet;  // 主从切换的回调函数类
+    private Set<Class<?>> disconfUpdateService;                // 更新 回调函数类
     private Class<IDisconfUpdatePipeline> iDisconfUpdatePipeline = null;
-
-    // 只是托管的配置文件，没有注入到类中
-    private Set<String> justHostFiles;
-
-    // reload files
-    private Set<String> reloadableFiles;
+    private Set<String> justHostFiles;                         // 只是托管的配置文件，没有注入到类中
+    private Set<String> reloadableFiles;                       // reload files
 
     public Reflections getReflections() {
         return reflections;
@@ -144,5 +125,4 @@ public class ScanStaticModel {
                 ", reloadableFiles=" + reloadableFiles +
                 '}';
     }
-
 }

@@ -7,6 +7,8 @@ import org.apache.commons.lang3.StringUtils;
  * 支持的文件后缀类型
  *
  * @author knightliao
+ *
+ * 2017-12-08
  */
 public enum SupportFileTypeEnum {
 
@@ -27,34 +29,26 @@ public enum SupportFileTypeEnum {
      * 根据文件名返回其文件后缀ENUM
      */
     public static SupportFileTypeEnum getByFileName(String fileName) {
-
         String extension = FilenameUtils.getExtension(fileName);
         if (StringUtils.isEmpty(extension)) {
             return SupportFileTypeEnum.ANY;
         }
-
         for (SupportFileTypeEnum supportFileTypeEnum : SupportFileTypeEnum.values()) {
-
             if (extension.equals(supportFileTypeEnum.modelName)) {
                 return supportFileTypeEnum;
             }
         }
-
         return SupportFileTypeEnum.ANY;
     }
 
     public static SupportFileTypeEnum getByType(int type) {
-
         int index = 0;
         for (SupportFileTypeEnum supportFileTypeEnum : SupportFileTypeEnum.values()) {
-
             if (type == index) {
                 return supportFileTypeEnum;
             }
-
             index++;
         }
-
         return null;
     }
 
@@ -73,5 +67,4 @@ public enum SupportFileTypeEnum {
     public void setModelName(String modelName) {
         this.modelName = modelName;
     }
-
 }

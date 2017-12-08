@@ -41,9 +41,10 @@ import com.google.common.base.Predicate;
  * 扫描静态注解，并且进行分析整合数据
  * <p/>
  * 使用 Reflection Lib
+ *
+ * 2017-12-08
  */
 public class ReflectionScanStatic implements ScanStaticStrategy {
-
     protected static final Logger LOGGER = LoggerFactory.getLogger(ScanStaticStrategy.class);
 
     /**
@@ -51,13 +52,8 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
      */
     @Override
     public ScanStaticModel scan(List<String> packNameList) {
-
-        // 基本信息
-        ScanStaticModel scanModel = scanBasicInfo(packNameList);
-
-        // 分析
-        analysis(scanModel);
-
+        ScanStaticModel scanModel = scanBasicInfo(packNameList); // 基本信息
+        analysis(scanModel);  // 分析
         return scanModel;
     }
 
@@ -65,37 +61,23 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
      * 通过扫描，获取反射对象
      */
     private Reflections getReflection(List<String> packNameList) {
-
-        //
-        // filter
-        //
-        FilterBuilder filterBuilder = new FilterBuilder().includePackage(Constants.DISCONF_PACK_NAME);
-
+        FilterBuilder filterBuilder = new FilterBuilder().includePackage(Constants.DISCONF_PACK_NAME); // filter
         for (String packName : packNameList) {
             filterBuilder = filterBuilder.includePackage(packName);
         }
         Predicate<String> filter = filterBuilder;
 
-        //
-        // urls
-        //
-        Collection<URL> urlTotals = new ArrayList<URL>();
+        Collection<URL> urlTotals = new ArrayList<URL>();         // urls
         for (String packName : packNameList) {
             Set<URL> urls = ClasspathHelper.forPackage(packName);
             urlTotals.addAll(urls);
         }
-
-        //
-        Reflections reflections = new Reflections(new ConfigurationBuilder().filterInputsBy(filter)
-                .setScanners(new SubTypesScanner().filterResultsBy(filter),
-                        new TypeAnnotationsScanner()
-                                .filterResultsBy(filter),
-                        new FieldAnnotationsScanner()
-                                .filterResultsBy(filter),
-                        new MethodAnnotationsScanner()
-                                .filterResultsBy(filter),
+        Reflections reflections = new Reflections(new ConfigurationBuilder().filterInputsBy(filter).setScanners(
+                        new SubTypesScanner().filterResultsBy(filter),
+                        new TypeAnnotationsScanner().filterResultsBy(filter),
+                        new FieldAnnotationsScanner().filterResultsBy(filter),
+                        new MethodAnnotationsScanner().filterResultsBy(filter),
                         new MethodParameterScanner()).setUrls(urlTotals));
-
         return reflections;
     }
 
@@ -103,61 +85,41 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
      * 分析出一些关系 出来
      */
     private void analysis(ScanStaticModel scanModel) {
-
-        // 分析出配置文件MAP
-        analysis4DisconfFile(scanModel);
+        analysis4DisconfFile(scanModel);  // 分析出配置文件MAP
     }
 
     /**
      * 分析出配置文件与配置文件中的Field的Method的MAP
      */
     private void analysis4DisconfFile(ScanStaticModel scanModel) {
-
         Map<Class<?>, Set<Method>> disconfFileItemMap = new HashMap<Class<?>, Set<Method>>();
-
-        //
-        // 配置文件MAP
-        //
-        Set<Class<?>> classdata = scanModel.getDisconfFileClassSet();
+        Set<Class<?>> classdata = scanModel.getDisconfFileClassSet();  // 配置文件MAP
         for (Class<?> classFile : classdata) {
             disconfFileItemMap.put(classFile, new HashSet<Method>());
         }
 
-        //
-        // 将配置文件与配置文件中的配置项进行关联
-        //
-        Set<Method> af1 = scanModel.getDisconfFileItemMethodSet();
+        Set<Method> af1 = scanModel.getDisconfFileItemMethodSet();    // 将配置文件与配置文件中的配置项进行关联
         for (Method method : af1) {
-
             Class<?> thisClass = method.getDeclaringClass();
-
             if (disconfFileItemMap.containsKey(thisClass)) {
                 Set<Method> fieldSet = disconfFileItemMap.get(thisClass);
                 fieldSet.add(method);
                 disconfFileItemMap.put(thisClass, fieldSet);
-
             } else {
-
                 LOGGER.error("cannot find CLASS ANNOTATION " + DisconfFile.class.getName()
-                        + " for disconf file item: " +
-                        method.toString());
+                        + " for disconf file item: " + method.toString());
             }
         }
 
-        //
         // 最后的校验
-        //
         Iterator<Class<?>> iterator = disconfFileItemMap.keySet().iterator();
         while (iterator.hasNext()) {
-
             Class<?> classFile = iterator.next();
-
             // 校验是否所有配置文件都含有配置
             if (disconfFileItemMap.get(classFile).isEmpty()) {
                 LOGGER.info("disconf file hasn't any items: " + classFile.getName());
                 continue;
             }
-
             // 校验配置文件类型是否合适(目前只支持.properties类型)
             DisconfFile disconfFile = classFile.getAnnotation(DisconfFile.class);
             boolean fileTypeRight = ScanVerify.isDisconfFileTypeRight(disconfFile);
@@ -166,7 +128,6 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
                 continue;
             }
         }
-
         // 设置
         scanModel.setDisconfFileItemMap(disconfFileItemMap);
     }
@@ -175,54 +136,21 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
      * 扫描基本信息
      */
     private ScanStaticModel scanBasicInfo(List<String> packNameList) {
-
         ScanStaticModel scanModel = new ScanStaticModel();
 
-        //
-        // 扫描对象
-        //
-        Reflections reflections = getReflection(packNameList);
+        Reflections reflections = getReflection(packNameList);  // 扫描对象
         scanModel.setReflections(reflections);
-
-        //
-        // 获取DisconfFile class
-        //
-        Set<Class<?>> classdata = reflections.getTypesAnnotatedWith(DisconfFile.class);
-        scanModel.setDisconfFileClassSet(classdata);
-
-        //
-        // 获取DisconfFileItem method
-        //
-        Set<Method> af1 = reflections.getMethodsAnnotatedWith(DisconfFileItem.class);
-        scanModel.setDisconfFileItemMethodSet(af1);
-
-        //
-        // 获取DisconfItem method
-        //
-        af1 = reflections.getMethodsAnnotatedWith(DisconfItem.class);
-        scanModel.setDisconfItemMethodSet(af1);
-
-        //
-        // 获取DisconfActiveBackupService
-        //
-        classdata = reflections.getTypesAnnotatedWith(DisconfActiveBackupService.class);
-        scanModel.setDisconfActiveBackupServiceClassSet(classdata);
-
-        //
-        // 获取DisconfUpdateService
-        //
-        classdata = reflections.getTypesAnnotatedWith(DisconfUpdateService.class);
-        scanModel.setDisconfUpdateService(classdata);
-
+        scanModel.setDisconfFileClassSet(reflections.getTypesAnnotatedWith(DisconfFile.class));
+        scanModel.setDisconfFileItemMethodSet(reflections.getMethodsAnnotatedWith(DisconfFileItem.class));
+        scanModel.setDisconfItemMethodSet(reflections.getMethodsAnnotatedWith(DisconfItem.class));
+        scanModel.setDisconfActiveBackupServiceClassSet(reflections.getTypesAnnotatedWith(DisconfActiveBackupService.class));
+        scanModel.setDisconfUpdateService(reflections.getTypesAnnotatedWith(DisconfUpdateService.class));
         // update pipeline
-        Set<Class<? extends IDisconfUpdatePipeline>> iDisconfUpdatePipeline = reflections.getSubTypesOf
-                (IDisconfUpdatePipeline
-                        .class);
+        Set<Class<? extends IDisconfUpdatePipeline>> iDisconfUpdatePipeline =
+                reflections.getSubTypesOf(IDisconfUpdatePipeline.class);
         if (iDisconfUpdatePipeline != null && iDisconfUpdatePipeline.size() != 0) {
-            scanModel.setiDisconfUpdatePipeline((Class<IDisconfUpdatePipeline>) iDisconfUpdatePipeline
-                    .toArray()[0]);
+            scanModel.setiDisconfUpdatePipeline((Class<IDisconfUpdatePipeline>) iDisconfUpdatePipeline.toArray()[0]);
         }
-
         return scanModel;
     }
 }

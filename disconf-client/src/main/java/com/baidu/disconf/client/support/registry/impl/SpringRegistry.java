@@ -16,6 +16,8 @@ import com.baidu.disconf.client.support.registry.Registry;
 
 /**
  * Created by knightliao on 15/11/26.
+ *
+ * 2017-12-08
  */
 public class SpringRegistry implements Registry, ApplicationContextAware {
 
@@ -23,7 +25,6 @@ public class SpringRegistry implements Registry, ApplicationContextAware {
 
     // Spring应用上下文环境
     private static ApplicationContext applicationContext;
-
     private SimpleRegistry simpleRegistry = new SimpleRegistry();
 
     @Override
@@ -33,12 +34,10 @@ public class SpringRegistry implements Registry, ApplicationContextAware {
 
     @Override
     public <T> List<T> findByType(Class<T> type, boolean newInstance) {
-
         if (applicationContext == null) {
             LOGGER.error("Spring Context is null. Cannot autowire " + type.getCanonicalName());
             return new ArrayList<T>(0);
         }
-
         if (type == null) {
             return new ArrayList<T>(0);
         }
@@ -51,7 +50,6 @@ public class SpringRegistry implements Registry, ApplicationContextAware {
                 return simpleRegistry.findByType(type, newInstance);
             }
         }
-
         return new ArrayList<T>(map.values());
     }
 
@@ -66,13 +64,10 @@ public class SpringRegistry implements Registry, ApplicationContextAware {
 
     @Override
     public <T> T getFirstByType(Class<T> type, boolean newInstance, boolean withProxy) {
-
         T object = getFirstByType(type, newInstance);
-
         if (!withProxy) {
             return object;
         }
-
         try {
             return getTargetObject(object, type);
         } catch (Exception e) {
@@ -83,9 +78,7 @@ public class SpringRegistry implements Registry, ApplicationContextAware {
 
     /**
      * 调用Spring工具类获取bean
-     *
      * @param type 类类型
-     *
      * @return 容器托管的bean字典
      */
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
