@@ -20,46 +20,36 @@ import com.baidu.disconf.core.common.zookeeper.ZookeeperMgr;
  *
  * @author liaoqiqi
  * @version 2014-6-10
+ *
+ * 2017-12-09
  */
 public class WatchMgrImpl implements WatchMgr {
-
     protected static final Logger LOGGER = LoggerFactory.getLogger(WatchMgrImpl.class);
 
-    /**
-     * zoo prefix
-     */
     private String zooUrlPrefix;
-
-    /**
-     *
-     */
     private boolean debug;
 
     /**
      * @Description: 获取自己的主备类型
      */
     public void init(String hosts, String zooUrlPrefix, boolean debug) throws Exception {
-
         this.zooUrlPrefix = zooUrlPrefix;
         this.debug = debug;
-
-        // init zookeeper
         ZookeeperMgr.getInstance().init(hosts, zooUrlPrefix, debug);
     }
 
     /**
      * 新建监控
-     *
-     * @throws Exception
      */
-    private String makeMonitorPath(DisConfigTypeEnum disConfigTypeEnum, DisConfCommonModel disConfCommonModel,
-                                   String key, String value) throws Exception {
+    private String makeMonitorPath(DisConfigTypeEnum disConfigTypeEnum,
+                                   DisConfCommonModel disConfCommonModel,
+                                   String key,
+                                   String value) throws Exception {
 
-        // 应用根目录
-        /*
-            应用程序的 Zoo 根目录
-        */
-        String clientRootZooPath = ZooPathMgr.getZooBaseUrl(zooUrlPrefix, disConfCommonModel.getApp(),
+        // 应用程序的 Zoo 根目录
+        String clientRootZooPath = ZooPathMgr.getZooBaseUrl(
+                zooUrlPrefix,
+                disConfCommonModel.getApp(),
                 disConfCommonModel.getEnv(),
                 disConfCommonModel.getVersion());
         ZookeeperMgr.getInstance().makeDir(clientRootZooPath, ZooUtils.getIp());
@@ -67,27 +57,19 @@ public class WatchMgrImpl implements WatchMgr {
         // 监控路径
         String monitorPath;
         if (disConfigTypeEnum.equals(DisConfigTypeEnum.FILE)) {
-
             // 新建Zoo Store目录
             String clientDisconfFileZooPath = ZooPathMgr.getFileZooPath(clientRootZooPath);
             makePath(clientDisconfFileZooPath, ZooUtils.getIp());
-
             monitorPath = ZooPathMgr.joinPath(clientDisconfFileZooPath, key);
 
         } else {
-
             // 新建Zoo Store目录
             String clientDisconfItemZooPath = ZooPathMgr.getItemZooPath(clientRootZooPath);
             makePath(clientDisconfItemZooPath, ZooUtils.getIp());
             monitorPath = ZooPathMgr.joinPath(clientDisconfItemZooPath, key);
         }
-
-        // 先新建路径
-        makePath(monitorPath, "");
-
-        // 新建一个代表自己的临时结点
-        makeTempChildPath(monitorPath, value);
-
+        makePath(monitorPath, "");        // 先新建路径
+        makeTempChildPath(monitorPath, value);  // 新建一个代表自己的临时结点
         return monitorPath;
     }
 
@@ -95,7 +77,6 @@ public class WatchMgrImpl implements WatchMgr {
      * 创建路径
      */
     private void makePath(String path, String data) {
-
         ZookeeperMgr.getInstance().makeDir(path, data);
     }
 
@@ -103,10 +84,7 @@ public class WatchMgrImpl implements WatchMgr {
      * 在指定路径下创建一个临时结点
      */
     private void makeTempChildPath(String path, String data) {
-
-        String finerPrint = DisClientComConfig.getInstance().getInstanceFingerprint();
-
-        String mainTypeFullStr = path + "/" + finerPrint;
+        String mainTypeFullStr = path + "/" + DisClientComConfig.getInstance().getInstanceFingerprint();
         try {
             ZookeeperMgr.getInstance().createEphemeralNode(mainTypeFullStr, data, CreateMode.EPHEMERAL);
         } catch (Exception e) {
@@ -117,28 +95,28 @@ public class WatchMgrImpl implements WatchMgr {
     /**
      * 监控路径,监控前会事先创建路径,并且会新建一个自己的Temp子结点
      */
-    public void watchPath(DisconfCoreProcessor disconfCoreMgr, DisConfCommonModel disConfCommonModel, String keyName,
-                          DisConfigTypeEnum disConfigTypeEnum, String value) throws Exception {
-
-        // 新建
-        String monitorPath = makeMonitorPath(disConfigTypeEnum, disConfCommonModel, keyName, value);
-
+    public void watchPath(DisconfCoreProcessor disconfCoreMgr,
+                          DisConfCommonModel disConfCommonModel,
+                          String keyName,
+                          DisConfigTypeEnum disConfigTypeEnum,
+                          String value) throws Exception {
+        String monitorPath = makeMonitorPath(disConfigTypeEnum, disConfCommonModel, keyName, value);  // 新建
         // 进行监控
-        NodeWatcher nodeWatcher =
-                new NodeWatcher(disconfCoreMgr, monitorPath, keyName, disConfigTypeEnum, new DisconfSysUpdateCallback(),
-                        debug);
+        NodeWatcher nodeWatcher = new NodeWatcher(disconfCoreMgr,
+                                                  monitorPath,
+                                                  keyName,
+                                                  disConfigTypeEnum,
+                                                  new DisconfSysUpdateCallback(),
+                                                  debug);
         nodeWatcher.monitorMaster();
     }
 
     @Override
     public void release() {
-
         try {
             ZookeeperMgr.getInstance().release();
         } catch (InterruptedException e) {
-
             LOGGER.error(e.toString());
         }
     }
-
 }

@@ -5,16 +5,12 @@ package com.baidu.disconf.client.common.model;
  *
  * @author liaoqiqi
  * @version 2014-5-20
+ *
+ * 2017-12-09
  */
 public class DisConfCommonModel {
-
-    // app 名
     private String app;
-
-    // 版本号
     private String version;
-
-    // 环境
     private String env;
 
     public String getApp() {
@@ -45,5 +41,4 @@ public class DisConfCommonModel {
     public String toString() {
         return "DisConfCommonModel [app=" + app + ", version=" + version + ", env=" + env + "]";
     }
-
 }

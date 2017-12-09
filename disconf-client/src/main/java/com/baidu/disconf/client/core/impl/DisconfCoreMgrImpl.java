@@ -38,10 +38,10 @@ public class DisconfCoreMgrImpl implements DisconfCoreMgr {
         this.fetcherMgr = fetcherMgr;
         this.registry = registry;
         // 在这里添加好配置项、配置文件的处理器
-        DisconfCoreProcessor disconfCoreProcessorFile = DisconfCoreProcessorFactory.getDisconfCoreProcessorFile(watchMgr, fetcherMgr, registry);
-        disconfCoreProcessorList.add(disconfCoreProcessorFile);
-        DisconfCoreProcessor disconfCoreProcessorItem = DisconfCoreProcessorFactory.getDisconfCoreProcessorItem(watchMgr, fetcherMgr, registry);
-        disconfCoreProcessorList.add(disconfCoreProcessorItem);
+        DisconfCoreProcessor processFile = DisconfCoreProcessorFactory.getDisconfCoreProcessorFile(watchMgr, fetcherMgr, registry);
+        disconfCoreProcessorList.add(processFile);
+        DisconfCoreProcessor processItem = DisconfCoreProcessorFactory.getDisconfCoreProcessorItem(watchMgr, fetcherMgr, registry);
+        disconfCoreProcessorList.add(processItem);
     }
 
     /**
@@ -62,16 +62,16 @@ public class DisconfCoreMgrImpl implements DisconfCoreMgr {
      */
     @Override
     public void processFile(String fileName) {
-        DisconfCoreProcessor disconfCoreProcessorFile = DisconfCoreProcessorFactory.getDisconfCoreProcessorFile(watchMgr, fetcherMgr, registry);
-        disconfCoreProcessorFile.processOneItem(fileName);
+        DisconfCoreProcessor processorFile = DisconfCoreProcessorFactory.getDisconfCoreProcessorFile(watchMgr, fetcherMgr, registry);
+        processorFile.processOneItem(fileName);
     }
 
     /**
      * 特殊的，将仓库里的数据注入到 配置项、配置文件 的实体中
      */
     public void inject2DisconfInstance() {
-        for (DisconfCoreProcessor disconfCoreProcessor : disconfCoreProcessorList) {
-            disconfCoreProcessor.inject2Conf();
+        for (DisconfCoreProcessor coreProcessor : disconfCoreProcessorList) {
+            coreProcessor.inject2Conf();
         }
     }
 

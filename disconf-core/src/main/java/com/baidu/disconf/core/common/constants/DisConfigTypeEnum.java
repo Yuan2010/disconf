@@ -5,6 +5,8 @@ package com.baidu.disconf.core.common.constants;
  *
  * @author liaoqiqi
  * @version 2014-5-16
+ *
+ * 2017-12-09
  */
 public enum DisConfigTypeEnum {
 
@@ -19,17 +21,13 @@ public enum DisConfigTypeEnum {
     }
 
     public static DisConfigTypeEnum getByType(int type) {
-
         int index = 0;
         for (DisConfigTypeEnum disConfigTypeEnum : DisConfigTypeEnum.values()) {
-
             if (type == index) {
                 return disConfigTypeEnum;
             }
-
             index++;
         }
-
         return null;
     }
 
@@ -48,5 +46,4 @@ public enum DisConfigTypeEnum {
     public void setModelName(String modelName) {
         this.modelName = modelName;
     }
-
 }

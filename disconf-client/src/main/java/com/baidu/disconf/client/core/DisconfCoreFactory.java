@@ -13,25 +13,18 @@ import com.baidu.disconf.client.watch.WatchMgr;
  *
  * @author liaoqiqi
  * @version 2014-7-29
+ *
+ * 2017-12-09
  */
 public class DisconfCoreFactory {
 
-    /**
-     * @throws Exception
-     */
     public static DisconfCoreMgr getDisconfCoreMgr(Registry registry) throws Exception {
-
         FetcherMgr fetcherMgr = FetcherFactory.getFetcherMgr();
-
-        //
         // 不开启disconf，则不要watch了
-        //
         WatchMgr watchMgr = null;
-        if (DisClientConfig.getInstance().ENABLE_DISCONF) {
-            // Watch 模块
-            watchMgr = WatchFactory.getWatchMgr(fetcherMgr);
+        if (DisClientConfig.getInstance().ENABLE_DISCONF) {   // 是否从云端下载。disconf.properties中的disconf.enable.remote.conf
+            watchMgr = WatchFactory.getWatchMgr(fetcherMgr);  // Watch 模块
         }
-
         return new DisconfCoreMgrImpl(watchMgr, fetcherMgr, registry);
     }
 }

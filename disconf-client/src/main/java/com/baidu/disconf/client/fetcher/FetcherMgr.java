@@ -5,6 +5,8 @@ package com.baidu.disconf.client.fetcher;
  *
  * @author liaoqiqi
  * @version 2014-6-12
+ *
+ * 2017-12-09
  */
 public interface FetcherMgr {
 
@@ -15,8 +17,6 @@ public interface FetcherMgr {
 
     /**
      * 下载配置文件, remoteUrl是目标 url, 下载到预定义的文件夹，并 下载到 targetDirPath 目录下
-     *
-     * @throws Exception
      */
     String downloadFileFromServer(String url, String fileName, String targetDirPath) throws Exception;
 

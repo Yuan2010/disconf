@@ -73,7 +73,7 @@ public class DisconfMgr implements ApplicationContextAware {
             LOGGER.info("******************************* DISCONF START FIRST SCAN *******************************");
 
             // registry
-            Registry registry = RegistryFactory.getSpringRegistry(applicationContext); // 获取IoC中的Bean注册表（实例化的Bean）
+            Registry registry = RegistryFactory.getSpringRegistry(applicationContext); // 获取IoC中的Bean注册表
             // 扫描器
             scanMgr = ScanFactory.getScanMgr(registry);
             // 第一次扫描并入库

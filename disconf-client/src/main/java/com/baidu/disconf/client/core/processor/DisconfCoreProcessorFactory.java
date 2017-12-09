@@ -11,24 +11,22 @@ import com.baidu.disconf.client.watch.WatchMgr;
  *
  * @author liaoqiqi
  * @version 2014-8-4
+ *
+ * 2017-12-09
  */
 public class DisconfCoreProcessorFactory {
 
     /**
      * 获取配置文件核心处理器
      */
-    public static DisconfCoreProcessor getDisconfCoreProcessorFile(WatchMgr watchMgr, FetcherMgr fetcherMgr, Registry
-            registry) {
-
+    public static DisconfCoreProcessor getDisconfCoreProcessorFile(WatchMgr watchMgr, FetcherMgr fetcherMgr, Registry registry) {
         return new DisconfFileCoreProcessorImpl(watchMgr, fetcherMgr, registry);
     }
 
     /**
      * 获取配置项核心 处理器
      */
-    public static DisconfCoreProcessor getDisconfCoreProcessorItem(WatchMgr watchMgr, FetcherMgr fetcherMgr, Registry
-            registry) {
-
+    public static DisconfCoreProcessor getDisconfCoreProcessorItem(WatchMgr watchMgr, FetcherMgr fetcherMgr, Registry registry) {
         return new DisconfItemCoreProcessorImpl(watchMgr, fetcherMgr, registry);
     }
 }

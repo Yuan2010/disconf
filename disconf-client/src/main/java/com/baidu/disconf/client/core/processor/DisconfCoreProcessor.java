@@ -5,6 +5,8 @@ package com.baidu.disconf.client.core.processor;
  *
  * @author liaoqiqi
  * @version 2014-8-4
+ *
+ * 2017-12-09
  */
 public interface DisconfCoreProcessor {
 
