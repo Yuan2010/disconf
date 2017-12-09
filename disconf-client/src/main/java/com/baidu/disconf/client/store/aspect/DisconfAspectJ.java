@@ -25,10 +25,11 @@ import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
  *
  * @author liaoqiqi
  * @version 2014-6-11
+ *
+ * 2017-12-09
  */
 @Aspect
 public class DisconfAspectJ {
-
     protected static final Logger LOGGER = LoggerFactory.getLogger(DisconfAspectJ.class);
 
     @Pointcut(value = "execution(public * *(..))")
@@ -37,69 +38,48 @@ public class DisconfAspectJ {
 
     /**
      * 获取配置文件数据, 只有开启disconf远程才会进行切面
-     *
-     * @throws Throwable
      */
     @Around("anyPublicMethod() && @annotation(disconfFileItem)")
     public Object decideAccess(ProceedingJoinPoint pjp, DisconfFileItem disconfFileItem) throws Throwable {
-
         if (DisClientConfig.getInstance().ENABLE_DISCONF) {
-
             MethodSignature ms = (MethodSignature) pjp.getSignature();
             Method method = ms.getMethod();
 
-            //
             // 文件名
-            //
             Class<?> cls = method.getDeclaringClass();
             DisconfFile disconfFile = cls.getAnnotation(DisconfFile.class);
 
-            //
             // Field名
-            //
             Field field = MethodUtils.getFieldFromMethod(method, cls.getDeclaredFields(), DisConfigTypeEnum.FILE);
             if (field != null) {
-
-                //
                 // 请求仓库配置数据
-                //
                 DisconfStoreProcessor disconfStoreProcessor =
                         DisconfStoreProcessorFactory.getDisconfStoreFileProcessor();
                 Object ret = disconfStoreProcessor.getConfig(disconfFile.filename(), disconfFileItem.name());
                 if (ret != null) {
-                    LOGGER.debug("using disconf store value: " + disconfFile.filename() + " ("
-                            + disconfFileItem.name() +
-                            " , " + ret + ")");
+                    LOGGER.debug("using disconf store value: " + disconfFile.filename() + " (" + disconfFileItem.name() + " , " + ret + ")");
                     return ret;
                 }
             }
         }
 
         Object rtnOb;
-
         try {
-            // 返回原值
-            rtnOb = pjp.proceed();
+            rtnOb = pjp.proceed();  // 返回原值
         } catch (Throwable t) {
             LOGGER.info(t.getMessage());
             throw t;
         }
-
         return rtnOb;
     }
 
     /**
      * 获取配置项数据, 只有开启disconf远程才会进行切面
-     *
-     * @throws Throwable
      */
     @Around("anyPublicMethod() && @annotation(disconfItem)")
     public Object decideAccess(ProceedingJoinPoint pjp, DisconfItem disconfItem) throws Throwable {
-
         if (DisClientConfig.getInstance().ENABLE_DISCONF) {
-            //
             // 请求仓库配置数据
-            //
             DisconfStoreProcessor disconfStoreProcessor = DisconfStoreProcessorFactory.getDisconfStoreItemProcessor();
             Object ret = disconfStoreProcessor.getConfig(null, disconfItem.key());
             if (ret != null) {
@@ -109,15 +89,12 @@ public class DisconfAspectJ {
         }
 
         Object rtnOb;
-
         try {
-            // 返回原值
-            rtnOb = pjp.proceed();
+            rtnOb = pjp.proceed();  // 返回原值
         } catch (Throwable t) {
             LOGGER.info(t.getMessage());
             throw t;
         }
-
         return rtnOb;
     }
 }

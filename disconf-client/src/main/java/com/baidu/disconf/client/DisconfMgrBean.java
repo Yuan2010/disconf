@@ -84,8 +84,6 @@ public class DisconfMgrBean implements BeanDefinitionRegistryPostProcessor, Prio
 
     /**
      * register aspectJ for disconf get request
-     *
-     * @param registry
      */
     private void registerAspect(BeanDefinitionRegistry registry) {
         GenericBeanDefinition beanDefinition = new GenericBeanDefinition();

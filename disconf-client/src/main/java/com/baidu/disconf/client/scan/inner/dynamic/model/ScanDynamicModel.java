@@ -13,13 +13,12 @@ import com.baidu.disconf.client.common.update.IDisconfUpdatePipeline;
  *
  * @author liaoqiqi
  * @version 2014-6-18
+ *
+ * 2017-12-09
  */
 public class ScanDynamicModel {
-
     // 配置及影响的回调函数, Key为配置项KEY 或 配置文件
-    private Map<DisconfKey, List<IDisconfUpdate>> disconfUpdateServiceInverseIndexMap =
-            new HashMap<DisconfKey, List<IDisconfUpdate>>();
-
+    private Map<DisconfKey, List<IDisconfUpdate>> disconfUpdateServiceInverseIndexMap = new HashMap<DisconfKey, List<IDisconfUpdate>>();
     private IDisconfUpdatePipeline disconfUpdatePipeline;
 
     public Map<DisconfKey, List<IDisconfUpdate>> getDisconfUpdateServiceInverseIndexMap() {
@@ -30,14 +29,12 @@ public class ScanDynamicModel {
         return disconfUpdatePipeline;
     }
 
-    public void setDisconfUpdatePipeline(
-            IDisconfUpdatePipeline disconfUpdatePipeline) {
+    public void setDisconfUpdatePipeline(IDisconfUpdatePipeline disconfUpdatePipeline) {
         this.disconfUpdatePipeline = disconfUpdatePipeline;
     }
 
     public void setDisconfUpdateServiceInverseIndexMap(Map<DisconfKey,
-            List<IDisconfUpdate>>
-                                                               disconfUpdateServiceInverseIndexMap) {
+            List<IDisconfUpdate>> disconfUpdateServiceInverseIndexMap) {
         this.disconfUpdateServiceInverseIndexMap = disconfUpdateServiceInverseIndexMap;
     }
 
@@ -45,7 +42,6 @@ public class ScanDynamicModel {
     public String toString() {
         return "ScanDynamicModel{" +
                 "disconfUpdateServiceInverseIndexMap=" + disconfUpdateServiceInverseIndexMap +
-                ", disconfUpdatePipeline=" + disconfUpdatePipeline +
-                '}';
+                ", disconfUpdatePipeline=" + disconfUpdatePipeline + '}';
     }
 }

@@ -9,6 +9,7 @@ import com.baidu.disconf.client.store.processor.impl.DisconfStorePipelineProcess
  *
  * @author liaoqiqi
  * @version 2014-8-4
+ * 2017-12-09
  */
 public class DisconfStoreProcessorFactory {
 
@@ -16,7 +17,6 @@ public class DisconfStoreProcessorFactory {
      * 获取配置文件仓库算子
      */
     public static DisconfStoreProcessor getDisconfStoreFileProcessor() {
-
         return new DisconfStoreFileProcessorImpl();
     }
 
@@ -24,7 +24,6 @@ public class DisconfStoreProcessorFactory {
      * 获取配置项仓库算子
      */
     public static DisconfStoreProcessor getDisconfStoreItemProcessor() {
-
         return new DisconfStoreItemProcessorImpl();
     }
 
@@ -32,8 +31,6 @@ public class DisconfStoreProcessorFactory {
      *
      */
     public static DisconfStorePipelineProcessor getDisconfStorePipelineProcessor() {
-
         return new DisconfStorePipelineProcessorImpl();
     }
-
 }

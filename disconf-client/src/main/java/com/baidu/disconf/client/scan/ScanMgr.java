@@ -5,6 +5,8 @@ import java.util.List;
 /**
  * @author liaoqiqi
  * @version 2014-7-29
+ *
+ * 2017-12-09
  */
 public interface ScanMgr {
 

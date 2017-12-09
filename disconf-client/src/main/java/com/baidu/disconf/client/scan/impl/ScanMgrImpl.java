@@ -60,7 +60,6 @@ public class ScanMgrImpl implements ScanMgr {
      * 第二次扫描(动态)
      */
     public void secondScan() throws Exception {
-
         if (DisClientConfig.getInstance().ENABLE_DISCONF) {  // 开启disconf才需要处理回调
             if (scanModel == null) {
                 synchronized(scanModel) {
