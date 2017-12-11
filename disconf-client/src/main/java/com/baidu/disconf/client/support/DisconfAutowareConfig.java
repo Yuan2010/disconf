@@ -86,7 +86,7 @@ public final class DisconfAutowareConfig {
                     String value;
                     if (field.isAnnotationPresent(DisconfFileItem.class)) {
                         name = field.getName();
-                        value = prop.getProperty(name, null);
+                        value = prop.getProperty(name);
                     } else {
                         // disconf使用的配置
                         DisInnerConfigAnnotation config = field.getAnnotation(DisInnerConfigAnnotation.class);
@@ -94,11 +94,9 @@ public final class DisconfAutowareConfig {
                         String defaultValue = config.defaultValue();
                         value = prop.getProperty(name, defaultValue); // 依次查找 本property list —> default property list  —> default, 没找到则返回defaultValue
                         // using disconf as prefix to avoid env confusion
-                        if (value.equals(defaultValue) && name != null) {
-                            if (name.contains("disconf.")) {
-                                String newName = name.substring(name.indexOf('.') + 1);
-                                value = prop.getProperty(newName, defaultValue);
-                            }
+                        if (name != null && value.equals(defaultValue) && name.contains("disconf.")) {
+                            String newName = name.substring(name.indexOf('.') + 1);
+                            value = prop.getProperty(newName, defaultValue);
                         }
                     }
 

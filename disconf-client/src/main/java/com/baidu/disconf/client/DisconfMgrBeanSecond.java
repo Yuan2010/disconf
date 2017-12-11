@@ -20,6 +20,14 @@ public class DisconfMgrBeanSecond {
 }
 
 
+
+
+
+
+
+
+
+
 /*       一个完整的spring-disconf.xml配置如下
 
         <?xml version="1.0" encoding="UTF-8"?>
