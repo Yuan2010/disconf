@@ -33,8 +33,7 @@ public final class DisClientConfig {
         return INSTANCE;
     }
 
-    private DisClientConfig() {
-    }
+    private DisClientConfig() {}
 
     public synchronized boolean isLoaded() {
         return isLoaded;
