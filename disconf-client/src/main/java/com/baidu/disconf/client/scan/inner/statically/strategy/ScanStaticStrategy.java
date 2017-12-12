@@ -9,8 +9,9 @@ import com.baidu.disconf.client.scan.inner.statically.model.ScanStaticModel;
  *
  * @author liaoqiqi
  * @version 2014-6-6
+ *
+ * 2017-12-11
  */
 public interface ScanStaticStrategy {
-
     ScanStaticModel scan(List<String> packNameList);
 }

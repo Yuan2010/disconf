@@ -17,21 +17,20 @@ import com.baidu.disconf.core.common.utils.http.HttpResponseCallbackHandler;
  *
  * @author liaoqiqi
  * @version 2014-6-16
+ *
+ * 2017-12-11
  */
 public class RestfulGet<T> implements UnreliableInterface {
-
     protected static final Logger LOGGER = LoggerFactory.getLogger(RestfulGet.class);
 
     private HttpRequestBase request = null;
     private HttpResponseCallbackHandler<T> httpResponseCallbackHandler = null;
 
     public RestfulGet(Class<T> clazz, URL url) {
-
         HttpGet request = new HttpGet(url.toString());
         request.addHeader("content-type", "application/json");
         this.request = request;
-        this.httpResponseCallbackHandler = new
-                HttpResponseCallbackHandlerJsonHandler<T>(clazz);
+        this.httpResponseCallbackHandler = new HttpResponseCallbackHandlerJsonHandler<T>(clazz);
     }
 
     /**
@@ -41,7 +40,6 @@ public class RestfulGet<T> implements UnreliableInterface {
     public T call() throws Exception {
 
         T value = HttpClientUtil.execute(request, httpResponseCallbackHandler);
-
         return value;
     }
 }

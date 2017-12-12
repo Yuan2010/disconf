@@ -5,9 +5,9 @@ package com.baidu.disconf.core.common.restful.core;
  *
  * @author liaoqiqi
  * @version 2014-6-10
+ *
+ * 2017-12-11
  */
 public interface UnreliableInterface {
-
     <T> T call() throws Exception;
-
 }

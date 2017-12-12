@@ -7,18 +7,13 @@ import com.baidu.disconf.core.common.restful.core.RemoteUrl;
  *
  * @author liaoqiqi
  * @version 2014-7-29
+ *
+ * 2017-12-11
  */
 public interface RestfulMgr {
 
     /**
      * 获取JSON数据
-     *
-     * @param clazz
-     * @param remoteUrl
-     *
-     * @return
-     *
-     * @throws Exception
      */
     <T> T getJsonData(Class<T> clazz, RemoteUrl remoteUrl, int retryTimes, int retrySleepSeconds) throws Exception;
 
@@ -32,11 +27,14 @@ public interface RestfulMgr {
      *
      * @throws Exception
      */
-    String downloadFromServer(RemoteUrl remoteUrl, String fileName, String localFileDir, String localFileDirTemp,
+    String downloadFromServer(RemoteUrl remoteUrl,
+                              String fileName,
+                              String localFileDir,
+                              String localFileDirTemp,
                               String targetDirPath,
                               boolean enableLocalDownloadDirInClassPath,
-                              int retryTimes, int retrySleepSeconds) throws Exception;
+                              int retryTimes,
+                              int retrySleepSeconds) throws Exception;
 
     void close();
-
 }
