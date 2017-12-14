@@ -144,6 +144,7 @@ public class DisconfStoreFileProcessorImpl implements DisconfStoreProcessor {
             for (String fileItem : keMap.keySet()) {
                 Object object = disconfValue.getFileData().get(fileItem);
                 if (object == null) {
+                    // 没找到配置文件时，输出了很多：cannot find pingpong.db.eu.url to be injected. file content is: {}  2017-12-14
                     LOGGER.error("cannot find {} to be injected. file content is: {}", fileItem, disconfValue.getFileData().toString());
                     continue;
                 }

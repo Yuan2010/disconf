@@ -69,7 +69,7 @@ public class DisconfCenterStore {
         String fileName = disconfCenterFile.getFileName();
 
         if (confFileMap.containsKey(fileName)) {
-
+            // local & dev & test 使用同一套disconf(web)时，会有这个提示。2017-12-14
             LOGGER.warn("There are two same fileName key!!!! " + fileName);
             DisconfCenterFile existCenterFile = confFileMap.get(fileName);
 

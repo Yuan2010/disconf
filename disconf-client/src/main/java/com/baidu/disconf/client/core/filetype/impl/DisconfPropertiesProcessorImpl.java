@@ -11,6 +11,8 @@ import com.baidu.disconf.client.support.utils.ConfigLoaderUtils;
  * Properties 处理器
  *
  * @author knightliao
+ *
+ * 2017-12-11
  */
 public class DisconfPropertiesProcessorImpl implements DisconfFileTypeProcessor {
 
