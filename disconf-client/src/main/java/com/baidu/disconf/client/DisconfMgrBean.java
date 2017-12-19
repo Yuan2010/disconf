@@ -79,7 +79,7 @@ public class DisconfMgrBean implements BeanDefinitionRegistryPostProcessor, Prio
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
-        this.applicationContext = applicationContext;
+        this.applicationContext = applicationContext;  // 有一次调试，是WebApplicationContext
     }
 
     /**

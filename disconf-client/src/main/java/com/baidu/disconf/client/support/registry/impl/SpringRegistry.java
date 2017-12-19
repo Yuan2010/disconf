@@ -85,13 +85,19 @@ public class SpringRegistry implements Registry, ApplicationContextAware {
         return applicationContext.getBeansOfType(type);
     }
 
+
+    /** 跟踪到Spring中看看怎么判断代理的类型？ */
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
-        if (AopUtils.isJdkDynamicProxy(proxy)) {
+        if (AopUtils.isJdkDynamicProxy(proxy)) {                          // 最终调用了JDK的方法
             return (T) ((Advised) proxy).getTargetSource().getTarget();
-        } else if (AopUtils.isCglibProxy(proxy)) {
+        } else if (AopUtils.isCglibProxy(proxy)) {                        // 判断是否包含2个$$
             return (T) ((Advised) proxy).getTargetSource().getTarget();
         } else {
             return (T) proxy;
         }
+
+        // JDK代理： object instanceof SpringProxy && Proxy.isProxyClass(object.getClass());  SpringProxy是标记接口
+
+        // CGlib代理： object instanceof SpringProxy &&  className.contains("$$")  // 大致是这样，标记接口是关键
     }
 }
