@@ -96,8 +96,54 @@ public class SpringRegistry implements Registry, ApplicationContextAware {
             return (T) proxy;
         }
 
-        // JDK代理： object instanceof SpringProxy && Proxy.isProxyClass(object.getClass());  SpringProxy是标记接口
+        /*
 
-        // CGlib代理： object instanceof SpringProxy &&  className.contains("$$")  // 大致是这样，标记接口是关键
+        第 1个： 判断代理类型：
+
+           JDK代理： object instanceof SpringProxy && Proxy.isProxyClass(object.getClass());  SpringProxy是标记接口
+           CGlib代理： object instanceof SpringProxy &&  className.contains("$$")  // 大致是这样，标记接口是关键
+
+        第 2 个： Advised 是啥？调试发现是CglibAopProxy的如下静态内部类（大约552行，接近尾部）
+
+         private static class AdvisedDispatcher implements Dispatcher, Serializable {
+             private final AdvisedSupport advised;
+
+             public AdvisedDispatcher(AdvisedSupport advised) {
+                 this.advised = advised;
+             }
+
+             public Object loadObject() throws Exception {
+                return this.advised;
+             }
+         }
+
+         调试拿到的具体信息：装配DataSourceConfig, 下面的内容是一行，被我分隔了
+org.springframework.aop.framework.ProxyFactory: 0 interfaces [];
+
+2 advisors [org.springframework.aop.interceptor.ExposeInvocationInterceptor.ADVISOR, InstantiationModelAwarePointcutAdvisor: expression [anyPublicMethod() && @annotation(disconfFileItem)];
+
+advice method [public java.lang.Object
+com.baidu.disconf.client.store.aspect.DisconfAspectJ.decideAccess(org.aspectj.lang.ProceedingJoinPoint,com.baidu.disconf.client.common.annotations.DisconfFileItem) throws java.lang.Throwable]; perClauseKind=SINGLETON];
+targetSource [SingletonTargetSource for target object [com.pingpongx.channelmgr.dao.disconf.ChannelMgrDataSourceConfig@3bb299ce]];
+proxyTargetClass=true; optimize=false; opaque=false; exposeProxy=false; frozen=false
+
+         第 3 个： 这些方法的调用时机？ 调试后发现，在输入如下日志之后就到了这里，也就是secondScan之前
+
+10:08:49 [DEBUG]-[localhost-startStop-1]-- Returning cached instance of singleton bean 'org.springframework.transaction.config.internalTransactionAdvisor'
+10:08:49 [DEBUG]-[localhost-startStop-1]-- Finished creating instance of bean 'channelSerialTypeController'
+10:08:49 [DEBUG]-[localhost-startStop-1]-- Returning cached instance of singleton bean 'disconfMgrBean'
+10:08:49 [DEBUG]-[localhost-startStop-1]-- Creating shared instance of singleton bean 'disconfMgrBeanSecond'
+10:08:49 [DEBUG]-[localhost-startStop-1]-- Creating instance of bean 'disconfMgrBeanSecond'
+10:08:49 [DEBUG]-[localhost-startStop-1]-- Returning cached instance of singleton bean 'org.springframework.transaction.config.internalTransactionAdvisor'
+10:08:49 [DEBUG]-[localhost-startStop-1]-- Eagerly caching bean 'disconfMgrBeanSecond' to allow for resolving potential circular references
+10:08:49 [DEBUG]-[localhost-startStop-1]-- Invoking init method  'init' on bean with name 'disconfMgrBeanSecond'
+10:08:49 [ INFO]-[localhost-startStop-1]-- ******************************* DISCONF START SECOND SCAN *******************************
+10:08:49 [DEBUG]-[localhost-startStop-1]-- ==============	start to inject value to disconf file item instance: db.properties	=============================
+
+         */
+
+
+
+
     }
 }
