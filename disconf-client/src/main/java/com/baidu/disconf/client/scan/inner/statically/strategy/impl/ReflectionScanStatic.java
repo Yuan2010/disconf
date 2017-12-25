@@ -137,7 +137,6 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
      */
     private ScanStaticModel scanBasicInfo(List<String> packNameList) {
         ScanStaticModel scanModel = new ScanStaticModel();
-
         Reflections reflections = getReflection(packNameList);  // 扫描对象
         scanModel.setReflections(reflections);
         scanModel.setDisconfFileClassSet(reflections.getTypesAnnotatedWith(DisconfFile.class));
@@ -145,11 +144,9 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
         scanModel.setDisconfItemMethodSet(reflections.getMethodsAnnotatedWith(DisconfItem.class));
         scanModel.setDisconfActiveBackupServiceClassSet(reflections.getTypesAnnotatedWith(DisconfActiveBackupService.class));
         scanModel.setDisconfUpdateService(reflections.getTypesAnnotatedWith(DisconfUpdateService.class));
-        // update pipeline
-        Set<Class<? extends IDisconfUpdatePipeline>> iDisconfUpdatePipeline =
-                reflections.getSubTypesOf(IDisconfUpdatePipeline.class);
-        if (iDisconfUpdatePipeline != null && iDisconfUpdatePipeline.size() != 0) {
-            scanModel.setiDisconfUpdatePipeline((Class<IDisconfUpdatePipeline>) iDisconfUpdatePipeline.toArray()[0]);
+        Set<Class<? extends IDisconfUpdatePipeline>> pipeline = reflections.getSubTypesOf(IDisconfUpdatePipeline.class);
+        if (pipeline != null && pipeline.size() != 0) {
+            scanModel.setiDisconfUpdatePipeline((Class<IDisconfUpdatePipeline>) pipeline.toArray()[0]);
         }
         return scanModel;
     }
