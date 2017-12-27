@@ -63,16 +63,19 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
     private Reflections getReflection(List<String> packNameList) {
         FilterBuilder filterBuilder = new FilterBuilder().includePackage(Constants.DISCONF_PACK_NAME); // filter
         for (String packName : packNameList) {
-            filterBuilder = filterBuilder.includePackage(packName);
+            // 第 1 步：pkgName.replace(".", "\\.") + ".*"
+            // 第 2 步：编译替换后的包名：Pattern.compile(regex)
+            // 第 2 步：添加到：List<Predicate<String>>
+            filterBuilder = filterBuilder.includePackage(packName);  // 流式编程(返回this)
         }
-        Predicate<String> filter = filterBuilder;
+        Predicate<String> filter = filterBuilder;                    // FilterBuilder implements Predicate<String>
 
-        Collection<URL> urlTotals = new ArrayList<URL>();         // urls
+        Collection<URL> urlTotals = new ArrayList<URL>();            // urls
         for (String packName : packNameList) {
-            Set<URL> urls = ClasspathHelper.forPackage(packName);
+            Set<URL> urls = ClasspathHelper.forPackage(packName);    // 点进去学到：ContextClassLoader与StaticClassLoader的区别，为啥有这样的区别。 web项目调试时发现只有一个WebAppClassLoader。 还有URL的解析也值得学习
             urlTotals.addAll(urls);
         }
-        Reflections reflections = new Reflections(new ConfigurationBuilder().filterInputsBy(filter).setScanners(
+        Reflections reflections = new Reflections(new ConfigurationBuilder().filterInputsBy(filter).setScanners(  // 边长参数，众多Scanner
                         new SubTypesScanner().filterResultsBy(filter),
                         new TypeAnnotationsScanner().filterResultsBy(filter),
                         new FieldAnnotationsScanner().filterResultsBy(filter),
@@ -139,6 +142,7 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
         ScanStaticModel scanModel = new ScanStaticModel();
         Reflections reflections = getReflection(packNameList);  // 扫描对象
         scanModel.setReflections(reflections);
+        // 下面都是通过ClassLoader中查找，核心代码在下边
         scanModel.setDisconfFileClassSet(reflections.getTypesAnnotatedWith(DisconfFile.class));
         scanModel.setDisconfFileItemMethodSet(reflections.getMethodsAnnotatedWith(DisconfFileItem.class));
         scanModel.setDisconfItemMethodSet(reflections.getMethodsAnnotatedWith(DisconfItem.class));
@@ -150,4 +154,22 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
         }
         return scanModel;
     }
+
+    /*
+
+    // 因为没有传入ClassLoader，所以这里边经过调试结果如下：classLoader是WebAppClassLoader, type是由@DisconfFile(filename = "demo.properties")标记的类的全称
+    for (ClassLoader classLoader : ClasspathHelper.classLoaders(classLoaders)) {
+          if (type.contains("[")) {
+              try {
+                    return Class.forName(type, false, classLoader);
+              } catch (Throwable ex) { /*continue/ }
+          }
+          try {
+                return classLoader.loadClass(type);  // 调试时，执行了这里
+          } catch (Throwable e) { /*continue/ }
+     }
+     throw new ReflectionsException("could not get type for name " + typeName);
+
+
+     */
 }
