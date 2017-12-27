@@ -166,6 +166,7 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
      }
      throw new ReflectionsException("could not get type for name " + typeName);
 
+     后来写一个普通的Java程序调试发现classLoader是AppClassLoader
 
      */
 }
