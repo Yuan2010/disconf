@@ -34,8 +34,7 @@ public class DisconfStoreFileProcessorImpl implements DisconfStoreProcessor {
     @Override
     public void addUpdateCallbackList(String keyName, List<IDisconfUpdate> iDisconfUpdateList) {
         if (getInstance().getConfFileMap().containsKey(keyName)) {
-            getInstance().getConfFileMap().get(keyName).getDisconfCommonCallbackModel().getDisconfConfUpdates()
-                    .addAll(iDisconfUpdateList);
+            getInstance().getConfFileMap().get(keyName).getDisconfCommonCallbackModel().getDisconfConfUpdates().addAll(iDisconfUpdateList);
         }
     }
 

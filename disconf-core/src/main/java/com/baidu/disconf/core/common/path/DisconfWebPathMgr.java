@@ -1,6 +1,5 @@
 package com.baidu.disconf.core.common.path;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -12,25 +11,20 @@ import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
  *
  * @author liaoqiqi
  * @version 2014-6-10
+ *
+ * 2017-12-27
  */
 public class DisconfWebPathMgr {
 
     public DisconfWebPathMgr() {
-
     }
 
     /**
-     * 获取 配置项 或者 是配置ITEM 的远程URL
-     *
-     * @return
+     * 拼接 配置||ITEM 的远程URL
      */
-    public static String getRemoteUrlParameter(String urlPrefix, String app, String version, String env, String key,
-                                               DisConfigTypeEnum disConfigTypeEnum) {
-
+    public static String getRemoteUrlParameter(String urlPrefix, String app, String version, String env, String key, DisConfigTypeEnum disConfigTypeEnum) {
         Map<String, String> parameterMap = getConfServerBasePathMap(app, version, env, key);
-
-        // 配置文件或配置项
-        parameterMap.put(Constants.TYPE, String.valueOf(disConfigTypeEnum.getType()));
+        parameterMap.put(Constants.TYPE, String.valueOf(disConfigTypeEnum.getType()));  // 配置文件或配置项
 
         StringBuffer sb = new StringBuffer();
         sb.append(urlPrefix);
@@ -43,55 +37,41 @@ public class DisconfWebPathMgr {
 
         sb.append("?");
         for (String thisKey : parameterMap.keySet()) {
-
             String cur = thisKey + "=" + parameterMap.get(thisKey);
             cur += "&";
             sb.append(cur);
         }
 
         if (sb.length() > 0) {
-            sb.deleteCharAt(sb.length() - 1);
+            sb.deleteCharAt(sb.length() - 1);  // 删掉末尾的&
         }
 
         return sb.toString();
     }
 
     /**
-     * @return String
-     *
-     * @Description: 获取基本配置路径 的MAP
-     * @author liaoqiqi
-     * @date 2013-6-16
+     * 获取基本配置路径 的MAP
      */
     private static Map<String, String> getConfServerBasePathMap(String app, String version, String env, String key) {
-
-        Map<String, String> parameterMap = new LinkedHashMap<String, String>();
-
+        Map<String, String> parameterMap = new LinkedHashMap<String, String>(4);
         parameterMap.put(Constants.VERSION, version);
         parameterMap.put(Constants.APP, app);
         parameterMap.put(Constants.ENV, env);
         parameterMap.put(Constants.KEY, key);
-
         return parameterMap;
     }
 
     /**
      * 获取 Disconf-Web 上的ZOO获取URL地址
-     *
-     * @return
      */
     public static String getZooHostsUrl(String urlPrefix) {
-
         return urlPrefix + Constants.SEP_STRING + Constants.ZOO_HOSTS_URL_KEY;
     }
 
     /**
      * 获取 Disconf-Web 上的ZOO PrefixURL
-     *
-     * @return
      */
     public static String getZooPrefixUrl(String urlPrefix) {
-
         return urlPrefix + Constants.SEP_STRING + Constants.ZOO_HOSTS_URL_PREFIX_KEY;
     }
 }

@@ -84,9 +84,6 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
         return reflections;
     }
 
-    /**
-     * 分析出一些关系 出来
-     */
     private void analysis(ScanStaticModel scanModel) {
         analysis4DisconfFile(scanModel);  // 分析出配置文件MAP
     }
@@ -109,8 +106,7 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
                 fieldSet.add(method);
                 disconfFileItemMap.put(thisClass, fieldSet);
             } else {
-                LOGGER.error("cannot find CLASS ANNOTATION " + DisconfFile.class.getName()
-                        + " for disconf file item: " + method.toString());
+                LOGGER.error("cannot find CLASS ANNOTATION " + DisconfFile.class.getName() + " for disconf file item: " + method.toString());
             }
         }
 
@@ -127,7 +123,7 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
             DisconfFile disconfFile = classFile.getAnnotation(DisconfFile.class);
             boolean fileTypeRight = ScanVerify.isDisconfFileTypeRight(disconfFile);
             if (!fileTypeRight) {
-                LOGGER.warn("now do not support this file type" + disconfFile.toString());
+                LOGGER.warn("do not support this file type" + disconfFile.toString());
                 continue;
             }
         }

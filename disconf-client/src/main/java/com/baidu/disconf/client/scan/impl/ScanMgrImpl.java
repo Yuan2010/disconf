@@ -48,7 +48,7 @@ public class ScanMgrImpl implements ScanMgr {
     public void firstScan(List<String> packageNameList) throws Exception {
         LOGGER.debug("start to scan package: " + packageNameList.toString());
 
-        scanModel = scanStaticStrategy.scan(packageNameList);                                      // 获取扫描对象并分析整合
+        scanModel = scanStaticStrategy.scan(packageNameList);                                      // 获取扫描对象（被@DisconfFile标记的配置类）并分析整合
         scanModel.setJustHostFiles(DisconfCenterHostFilesStore.getInstance().getJustHostFiles());  // 增加非注解的配置
         for (StaticScannerMgr scannerMgr : staticScannerMgrList) {                                 // 放进仓库
             scannerMgr.scanData2Store(scanModel);                                                  // 扫描进入仓库
