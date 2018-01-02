@@ -78,13 +78,11 @@ public class SpringRegistry implements Registry, ApplicationContextAware {
 
     /**
      * 调用Spring工具类获取bean
-     * @param type 类类型
      * @return 容器托管的bean字典
      */
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
         return applicationContext.getBeansOfType(type);
     }
-
 
     /** 跟踪到Spring中看看怎么判断代理的类型？ */
     protected <T> T getTargetObject(Object proxy, Class<T> targetClass) throws Exception {
@@ -141,9 +139,5 @@ proxyTargetClass=true; optimize=false; opaque=false; exposeProxy=false; frozen=f
 10:08:49 [DEBUG]-[localhost-startStop-1]-- ==============	start to inject value to disconf file item instance: db.properties	=============================
 
          */
-
-
-
-
     }
 }
