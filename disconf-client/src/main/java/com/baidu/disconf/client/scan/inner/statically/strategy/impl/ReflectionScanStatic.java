@@ -65,7 +65,7 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
         for (String packName : packNameList) {
             // 第 1 步：pkgName.replace(".", "\\.") + ".*"
             // 第 2 步：编译替换后的包名：Pattern.compile(regex)
-            // 第 2 步：添加到：List<Predicate<String>>
+            // 第 3 步：添加到：List<Predicate<String>>
             filterBuilder = filterBuilder.includePackage(packName);  // 流式编程(返回this)
         }
         Predicate<String> filter = filterBuilder;                    // FilterBuilder implements Predicate<String>
@@ -75,7 +75,7 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
             Set<URL> urls = ClasspathHelper.forPackage(packName);    // 点进去学到：ContextClassLoader与StaticClassLoader的区别，为啥有这样的区别。 web项目调试时发现只有一个WebAppClassLoader。 还有URL的解析也值得学习
             urlTotals.addAll(urls);
         }
-        Reflections reflections = new Reflections(new ConfigurationBuilder().filterInputsBy(filter).setScanners(  // 边长参数，众多Scanner
+        Reflections reflections = new Reflections(new ConfigurationBuilder().filterInputsBy(filter).setScanners(  // 变长参数，众多Scanner
                         new SubTypesScanner().filterResultsBy(filter),
                         new TypeAnnotationsScanner().filterResultsBy(filter),
                         new FieldAnnotationsScanner().filterResultsBy(filter),
