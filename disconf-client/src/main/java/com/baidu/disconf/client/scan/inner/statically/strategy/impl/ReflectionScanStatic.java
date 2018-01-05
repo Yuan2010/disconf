@@ -52,7 +52,7 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
      */
     @Override
     public ScanStaticModel scan(List<String> packNameList) {
-        ScanStaticModel scanModel = scanBasicInfo(packNameList); // 基本信息
+        ScanStaticModel scanModel = scanBasicInfo(packNameList); // 扫描配置，反射获取所有被注解标记的类和方法
         analysis(scanModel);  // 分析
         return scanModel;
     }
@@ -61,11 +61,12 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
      * 通过扫描，获取反射对象
      */
     private Reflections getReflection(List<String> packNameList) {
+        // includePackage的详细内容：
+        // 第 1 步：pkgName.replace(".", "\\.") + ".*"                // 把"."替换为"\\."   看String API 知replace(target, replacement) 替换所有找到的子串，target被编译为RegExp的pattern
+        // 第 2 步：编译替换后的包名：Pattern.compile(regex)
+        // 第 3 步：添加到：List<Predicate<String>>                    // ['prɛdɪkət]  vt. 断定为…；使…基于  vi. 断言，断定 n. 谓语，述语  adj. 谓语的；述语的
         FilterBuilder filterBuilder = new FilterBuilder().includePackage(Constants.DISCONF_PACK_NAME); // filter
-        for (String packName : packNameList) {
-            // 第 1 步：pkgName.replace(".", "\\.") + ".*"
-            // 第 2 步：编译替换后的包名：Pattern.compile(regex)
-            // 第 3 步：添加到：List<Predicate<String>>
+        for (String packName : packNameList) {                       // 到目前为止把XML中配置的包名（scanPackage）和Disconf本身的包名都add到List中
             filterBuilder = filterBuilder.includePackage(packName);  // 流式编程(返回this)
         }
         Predicate<String> filter = filterBuilder;                    // FilterBuilder implements Predicate<String>
@@ -75,12 +76,15 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
             Set<URL> urls = ClasspathHelper.forPackage(packName);    // 点进去学到：ContextClassLoader与StaticClassLoader的区别，为啥有这样的区别。 web项目调试时发现只有一个WebAppClassLoader。 还有URL的解析也值得学习
             urlTotals.addAll(urls);
         }
-        Reflections reflections = new Reflections(new ConfigurationBuilder().filterInputsBy(filter).setScanners(  // 变长参数，众多Scanner
+        // 反射获取scanPackage和Disconf本身的所有类
+        Reflections reflections = new Reflections(
+                new ConfigurationBuilder().filterInputsBy(filter).setScanners(  // 变长参数，众多Scanner， 最终执行了HashSet.addAll(数组)
                         new SubTypesScanner().filterResultsBy(filter),
                         new TypeAnnotationsScanner().filterResultsBy(filter),
                         new FieldAnnotationsScanner().filterResultsBy(filter),
                         new MethodAnnotationsScanner().filterResultsBy(filter),
-                        new MethodParameterScanner()).setUrls(urlTotals));
+                        new MethodParameterScanner()).setUrls(urlTotals)
+                );
         return reflections;
     }
 
@@ -89,7 +93,11 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
     }
 
     /**
-     * 分析出配置文件与配置文件中的Field的Method的MAP
+     *
+     * DisconfFile注解只能标记类，一个DisconfFile注解对应一个properties配置文件，比如：@DisconfFile(filename = "db.properties")
+     * 这里分析出DisconfFile注解与配置文件的对应关系、被标记类的方法、属性
+     *
+     * 分析出配置文件与配置文件中的Field的Method的MAP （原始注解）
      */
     private void analysis4DisconfFile(ScanStaticModel scanModel) {
         Map<Class<?>, Set<Method>> disconfFileItemMap = new HashMap<Class<?>, Set<Method>>();
@@ -132,7 +140,7 @@ public class ReflectionScanStatic implements ScanStaticStrategy {
     }
 
     /**
-     * 扫描基本信息
+     * 扫描配置，反射获取所有被注解标记的类和方法
      */
     private ScanStaticModel scanBasicInfo(List<String> packNameList) {
         ScanStaticModel scanModel = new ScanStaticModel();
