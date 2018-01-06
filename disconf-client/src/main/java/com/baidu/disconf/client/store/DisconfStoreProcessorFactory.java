@@ -27,9 +27,6 @@ public class DisconfStoreProcessorFactory {
         return new DisconfStoreItemProcessorImpl();
     }
 
-    /**
-     *
-     */
     public static DisconfStorePipelineProcessor getDisconfStorePipelineProcessor() {
         return new DisconfStorePipelineProcessorImpl();
     }

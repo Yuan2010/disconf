@@ -15,6 +15,8 @@ import com.baidu.disconf.core.common.constants.DisConfigTypeEnum;
 /**
  * @author liaoqiqi
  * @version 2014-9-9
+ *
+ * 2018-01-06
  */
 public class MethodUtils {
 
@@ -26,56 +28,36 @@ public class MethodUtils {
     public static Field getFieldFromMethod(Method method, Field[] expectedFields, DisConfigTypeEnum disConfigTypeEnum) {
 
         String fieldName;
-
         if (disConfigTypeEnum.equals(DisConfigTypeEnum.FILE)) {
-
-            DisconfFileItem disconfFileItem = method.getAnnotation(DisconfFileItem.class);
-            // 根据用户设定的注解来获取
-            fieldName = disconfFileItem.associateField();
-
+            fieldName = method.getAnnotation(DisconfFileItem.class).associateField();  // 根据用户设定的注解来获取
         } else {
-
-            DisconfItem disItem = method.getAnnotation(DisconfItem.class);
-            // 根据用户设定的注解来获取
-            fieldName = disItem.associateField();
+            fieldName = method.getAnnotation(DisconfItem.class).associateField();      // 根据用户设定的注解来获取
         }
 
-        //
         // 如果用户未设定注解，则猜其名字
-        //
         if (StringUtils.isEmpty(fieldName)) {
-            // 从方法名 获取其 Field 名
-            fieldName = ClassUtils.getFieldNameByGetMethodName(method.getName());
+            fieldName = ClassUtils.getFieldNameByGetMethodName(method.getName());     // 从方法名 获取其 Field 名
         }
 
         // 确认此Field名是正确的
         for (Field field : expectedFields) {
-
             if (field.getName().equals(fieldName)) {
                 return field;
             }
         }
 
         LOGGER.error(method.toString() + " cannot get its related field name. ");
-
         return null;
     }
 
-    /**
-     *
-     */
     public static Method getSetterMethodFromField(Class<?> curClass, Field field) {
-
         String fieldName = field.getName().toLowerCase();
-
-        Set<Method> methods = ClassUtils.getAllMethod(curClass);
+        Set<Method> methods = ClassUtils.getAllMethod(curClass);  // 获取一个类的所有方法（包括所有父类的，Object除外）
         for (Method method : methods) {
             if (method.getName().toLowerCase().equals("set" + fieldName)) {
                 return method;
             }
         }
-
         return null;
     }
-
 }

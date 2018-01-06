@@ -112,23 +112,23 @@ public class ClassUtils {
     }
 
     /**
-     * 获取一个类的所有方法
+     * 获取一个类的所有方法（包括所有父类的，Object除外）
      */
     public static Set<Method> getAllMethod(Class<?> entityClass) {
         // 获取本类的所有的方法
-        Set<Method> ms = new HashSet<Method>();
+        Set<Method> methodSet = new HashSet<Method>();
         for (Method m : entityClass.getMethods()) {
-            ms.add(m);
+            methodSet.add(m);
         }
         for (Method m : entityClass.getDeclaredMethods()) {
-            ms.add(m);
+            methodSet.add(m);
         }
         // 递归获取父类的所有方法
         Class<?> superClass = entityClass.getSuperclass();
         if (!superClass.equals(Object.class)) {
             Set<Method> superFields = getAllMethod(superClass);
-            ms.addAll(superFields);
+            methodSet.addAll(superFields);
         }
-        return ms;
+        return methodSet;
     }
 }

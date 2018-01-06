@@ -82,7 +82,7 @@ public class StaticScannerFileMgrImpl extends StaticScannerMgrImplBase implement
         disconfCenterFile.setDisConfCommonModel(disConfCommonModel);
 
         // Remote URL
-        String url = DisconfWebPathMgr.getRemoteUrlParameter(
+        String url = DisconfWebPathMgr.getRemoteUrlParameter(  // disconf-core的类
                 DisClientSysConfig.getInstance().CONF_SERVER_STORE_ACTION,
                 disConfCommonModel.getApp(),
                 disConfCommonModel.getVersion(),
@@ -114,7 +114,7 @@ public class StaticScannerFileMgrImpl extends StaticScannerMgrImplBase implement
                     LOGGER.error(e.toString());
                 }
             } else {
-                // 非static则为Null, 这里我们没有必要获取其Bean的值
+                // 非static则为Null, 因为必要获取其Bean的值
                 FileItemValue fileItemValue = new FileItemValue(null, field, setterMethod);
                 keyMaps.put(keyName, fileItemValue);
             }
