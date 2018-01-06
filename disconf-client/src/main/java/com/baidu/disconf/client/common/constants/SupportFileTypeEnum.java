@@ -29,7 +29,7 @@ public enum SupportFileTypeEnum {
      * 根据文件名返回其文件后缀ENUM
      */
     public static SupportFileTypeEnum getByFileName(String fileName) {
-        String extension = FilenameUtils.getExtension(fileName);
+        String extension = FilenameUtils.getExtension(fileName);        // 学习一下：位运算找文件扩展名
         if (StringUtils.isEmpty(extension)) {
             return SupportFileTypeEnum.ANY;
         }

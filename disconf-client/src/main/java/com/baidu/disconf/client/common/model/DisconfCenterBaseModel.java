@@ -5,21 +5,17 @@ package com.baidu.disconf.client.common.model;
  *
  * @author liaoqiqi
  * @version 2014-8-4
+ *
+ * 2018-01-06
  */
 public abstract class DisconfCenterBaseModel {
 
-    // 所在类实体
-    private Object object;
+    private Object object;     // 所在类实体
+    private String remoteServerUrl;    // 远程配置服务的URL路径,不包含IP和PORT的
+    private DisConfCommonModel disConfCommonModel = new DisConfCommonModel();  // 通用配置
+    private DisconfCommonCallbackModel disconfCommonCallbackModel = new DisconfCommonCallbackModel();  // 回调函数
 
-    // 远程配置服务的URL路径,不包含IP和PORT的
-    private String remoteServerUrl;
-
-    // 通用配置
-    private DisConfCommonModel disConfCommonModel = new DisConfCommonModel();
-
-    // 回调函数
-    private DisconfCommonCallbackModel disconfCommonCallbackModel = new DisconfCommonCallbackModel();
-
+    // get / set 下面都是
     public DisConfCommonModel getDisConfCommonModel() {
         return disConfCommonModel;
     }
