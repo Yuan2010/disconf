@@ -20,32 +20,22 @@ import com.baidu.disconf.core.common.utils.OsUtil;
  *
  * @author liaoqiqi
  * @version 2014-5-20
+ *
+ * 2018-01-08
  */
 public class DisconfCenterFile extends DisconfCenterBaseModel {
 
     protected static final Logger LOGGER = LoggerFactory.getLogger(DisconfCenterFile.class);
 
-    // -----key: 配置文件中的项名
-    // -----value: 默认值
+    // key: 配置文件中的项
+    // value: 默认值
     private Map<String, FileItemValue> keyMaps = new HashMap<String, FileItemValue>();
-
-    // 额外的配置数据，非注解式使用它来存储
-    private Map<String, Object> additionalKeyMaps = new HashMap<String, Object>();
-
-    // 是否是非注解注入方式
-    private boolean isTaggedWithNonAnnotationFile = false;
-
-    // 配置文件类
-    private Class<?> cls;
-
-    // 文件名
-    private String fileName;
-
-    // 配置文件 指定路径下
-    private String targetDirPath;
-
-    // 文件类型
-    private SupportFileTypeEnum supportFileTypeEnum = SupportFileTypeEnum.ANY;
+    private Map<String, Object> additionalKeyMaps = new HashMap<String, Object>();  // 额外的配置数据，非注解式使用它来存储
+    private boolean isTaggedWithNonAnnotationFile = false;             // 是否是非注解注入方式
+    private Class<?> cls;         // 配置文件类
+    private String fileName;      // 文件名
+    private String targetDirPath; // 配置文件 指定路径下
+    private SupportFileTypeEnum supportFileTypeEnum = SupportFileTypeEnum.ANY;  // 文件类型
 
     public Class<?> getCls() {
         return cls;
@@ -120,20 +110,16 @@ public class DisconfCenterFile extends DisconfCenterBaseModel {
      * 获取可以表示的KeyMap对
      */
     public Map<String, Object> getKV() {
-
         // 非注解式的
         if (keyMaps.size() == 0) {
             return additionalKeyMaps;
         }
 
-        //
         // 注解式的
-        //
         Map<String, Object> map = new HashMap<String, Object>();
         for (String key : keyMaps.keySet()) {
             map.put(key, keyMaps.get(key).getValue());
         }
-
         return map;
     }
 
@@ -141,21 +127,16 @@ public class DisconfCenterFile extends DisconfCenterBaseModel {
      * 配置文件的路径
      */
     public String getFilePath() {
-
         // 不放到classpath, 则文件路径根据 userDefineDownloadDir 来设置
         if (!DisClientConfig.getInstance().enableLocalDownloadDirInClassPath) {
             return OsUtil.pathJoin(DisClientConfig.getInstance().userDefineDownloadDir, fileName);
         }
-
         if (targetDirPath != null) {
-
             if (targetDirPath.startsWith("/")) {
                 return OsUtil.pathJoin(targetDirPath, fileName);
             }
-
-            return OsUtil.pathJoin(ClassLoaderUtil.getClassPath(), targetDirPath, fileName);
+            return OsUtil.pathJoin(ClassLoaderUtil.getClassPath(), targetDirPath, fileName);  // core 的工具类
         }
-
         return OsUtil.pathJoin(ClassLoaderUtil.getClassPath(), fileName);
     }
 
@@ -163,28 +144,20 @@ public class DisconfCenterFile extends DisconfCenterBaseModel {
      * 配置文件的路径
      */
     public String getFileDir() {
-
         // 获取相对于classpath的路径
         if (targetDirPath != null) {
-
             if (targetDirPath.startsWith("/")) {
                 return OsUtil.pathJoin(targetDirPath);
             }
-
             return OsUtil.pathJoin(ClassLoaderUtil.getClassPath(), targetDirPath);
         }
-
         return ClassLoaderUtil.getClassPath();
     }
 
     /**
      * 配置文件Item项表示，包括了值，还有其类型
-     *
-     * @author liaoqiqi
-     * @version 2014-6-16
      */
     public static class FileItemValue {
-
         private Object value;
         private Field field;
         private Method setMethod;
@@ -192,19 +165,15 @@ public class DisconfCenterFile extends DisconfCenterBaseModel {
         public Object getValue() {
             return value;
         }
-
         public void setValue(Object value) {
             this.value = value;
         }
-
         public void setField(Field field) {
             this.field = field;
         }
 
         /**
          * 是否是静态域
-         *
-         * @return
          */
         public boolean isStatic() {
             return Modifier.isStatic(field.getModifiers());
@@ -212,27 +181,21 @@ public class DisconfCenterFile extends DisconfCenterBaseModel {
 
         /**
          * 设置value, 优先使用 setter method, 然后其次是反射
-         *
-         * @param value
          */
         public Object setValue4StaticFileItem(Object value) throws Exception {
-
             try {
                 if (setMethod != null) {
                     setMethod.invoke(null, value);
                 } else {
                     field.set(null, value);
                 }
-
             } catch (Exception e) {
                 LOGGER.warn(e.toString());
             }
-
             return value;
         }
 
         public Object setValue4FileItem(Object object, Object value) throws Exception {
-
             try {
                 if (setMethod != null) {
                     setMethod.invoke(object, value);
@@ -242,19 +205,9 @@ public class DisconfCenterFile extends DisconfCenterBaseModel {
             } catch (Exception e) {
                 LOGGER.warn(e.toString());
             }
-
             return value;
         }
 
-        /**
-         * 返回值
-         *
-         * @param fieldValue
-         *
-         * @return
-         *
-         * @throws Exception
-         */
         public Object getFieldValueByType(Object fieldValue) throws Exception {
             return ClassUtils.getValeByType(field.getType(), fieldValue);
         }
@@ -265,11 +218,7 @@ public class DisconfCenterFile extends DisconfCenterBaseModel {
 
         @Override
         public String toString() {
-            return "FileItemValue{" +
-                    "value=" + value +
-                    ", field=" + field +
-                    ", setMethod=" + setMethod +
-                    '}';
+            return "FileItemValue[value=" + value + ", field=" + field + ", setMethod=" + setMethod + ']';
         }
 
         public FileItemValue(Object value, Field field) {
