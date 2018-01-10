@@ -20,64 +20,44 @@ import com.google.common.collect.Multimap;
  *
  * @author liaoqiqi
  * @version 2014-6-9
+ *
+ * 2018-01-10
  */
 public class ScanPrinterUtils {
-
     protected static final Logger LOGGER = LoggerFactory.getLogger(ScanPrinterUtils.class);
 
     /**
      * 打印出StoreMap的数据
      */
     public static void printStoreMap(Reflections reflections) {
-
         LOGGER.info("Now we will print store map......");
-
         Store store = reflections.getStore();
         Map<String/* indexName */, Multimap<String, String>> storeMap = store.getStoreMap();
         for (String indexName : storeMap.keySet()) {
-
             LOGGER.info("====================================");
             LOGGER.info("indexName:" + indexName);
-
             Multimap<String, String> multimap = storeMap.get(indexName);
-
             for (String firstName : multimap.keySet()) {
                 Collection<String> lastNames = multimap.get(firstName);
                 LOGGER.info("\t\t" + firstName + ": " + lastNames);
             }
-
         }
     }
 
-    /**
-     *
-     */
     public static void printFileItem(Set<Field> disconfFileItemSet) {
-
         for (Field item : disconfFileItemSet) {
-
             LOGGER.info(item.toString());
         }
     }
 
-    /**
-     *
-     */
     public static void printFileItemMethod(Set<Method> disconfFileItemSet) {
-
         for (Method item : disconfFileItemSet) {
-
             LOGGER.info(item.toString());
         }
     }
 
-    /**
-     *
-     */
     public static void printFile(Set<Class<?>> classdata) {
-
         for (Class<?> item : classdata) {
-
             LOGGER.info(item.toString());
             DisconfFile disconfFile = item.getAnnotation(DisconfFile.class);
             LOGGER.info("\tfile name: " + disconfFile.filename());
@@ -86,13 +66,8 @@ public class ScanPrinterUtils {
         }
     }
 
-    /**
-     *
-     */
     public static void printFileMap(Map<Class<?>, Set<Field>> disconfFileItemMap) {
-
         for (Class<?> thisClass : disconfFileItemMap.keySet()) {
-
             LOGGER.info(thisClass + " -> ");
             Set<Field> fields = disconfFileItemMap.get(thisClass);
             for (Field field : fields) {
@@ -101,40 +76,24 @@ public class ScanPrinterUtils {
         }
     }
 
-    /**
-     *
-     */
     public static void printItem(Set<Field> af1) {
-
         for (Field item : af1) {
-
             LOGGER.info(item.toString());
             DisconfItem disconfItem = item.getAnnotation(DisconfItem.class);
             LOGGER.info("\tkey: " + disconfItem.key());
             LOGGER.info("\tenv: " + disconfItem.env());
             LOGGER.info("\tversion: " + disconfItem.version());
-
         }
     }
 
-    /**
-     *
-     */
     public static void printActiveBackup(Set<Class<?>> classdata) {
-
         for (Class<?> item : classdata) {
-
             LOGGER.info(item.toString());
         }
     }
 
-    /**
-     *
-     */
     public static void printUpdateFile(Set<Class<?>> classdata) {
-
         for (Class<?> item : classdata) {
-
             LOGGER.info(item.toString());
         }
     }

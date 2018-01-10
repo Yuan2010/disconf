@@ -24,7 +24,7 @@ public class DisconfWebPathMgr {
      */
     public static String getRemoteUrlParameter(String urlPrefix, String app, String version, String env, String key, DisConfigTypeEnum disConfigTypeEnum) {
         Map<String, String> parameterMap = getConfServerBasePathMap(app, version, env, key);
-        parameterMap.put(Constants.TYPE, String.valueOf(disConfigTypeEnum.getType()));  // 配置文件或配置项
+        parameterMap.put(Constants.TYPE, String.valueOf(disConfigTypeEnum.getType()));       // 配置文件或配置项
 
         StringBuffer sb = new StringBuffer();
         sb.append(urlPrefix);
@@ -45,7 +45,6 @@ public class DisconfWebPathMgr {
         if (sb.length() > 0) {
             sb.deleteCharAt(sb.length() - 1);  // 删掉末尾的&
         }
-
         return sb.toString();
     }
 
