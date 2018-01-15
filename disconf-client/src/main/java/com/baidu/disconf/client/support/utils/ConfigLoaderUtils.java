@@ -23,7 +23,6 @@ import com.baidu.disconf.core.common.utils.ClassLoaderUtil;
  * 2017-12-08
  */
 public final class ConfigLoaderUtils {
-
     protected static final Logger LOGGER = LoggerFactory.getLogger(ConfigLoaderUtils.class);
 
     private ConfigLoaderUtils() {
